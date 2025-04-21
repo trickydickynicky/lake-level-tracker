@@ -420,3 +420,9 @@ document.getElementById('timeRange').addEventListener('change', (e) => {
 // Fetch data immediately and then every 15 minutes
 fetchLakeData(currentTimeRange);
 setInterval(() => fetchLakeData(currentTimeRange), 15 * 60 * 1000); 
+// Resize chart when window resizes
+window.addEventListener('resize', () => {
+    if (levelChart) {
+        levelChart.resize();
+    }
+});
