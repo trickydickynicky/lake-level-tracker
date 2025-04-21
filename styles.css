@@ -3,6 +3,12 @@
     padding: 0;
     box-sizing: border-box;
 }
+/* Global Styles for body and html */
+body, html {
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    width: 100%; /* Ensure the body and HTML take up 100% of the width */
+    height: 100%; /* Make sure the height covers the full screen */
+}
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -172,12 +178,16 @@ body {
 
 /* Main Content Styles */
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
+    max-width: 1200px; /* Keep this */
+    margin: 0 auto; /* Keep this */
+    padding: 2rem 1rem; /* Keep this */
     position: relative;
     z-index: 1;
+    width: 100%; /* Add this */
+    max-width: 100%; /* Add this */
 }
+
+
 
 
 .header-content {
@@ -257,17 +267,19 @@ main {
 
 
 .card {
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 2rem;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    transition: transform 0.3s ease;
-    width: 100%;
-    max-width: 600px; /* or 600px if you want it narrower */
-    margin: 0 auto;
+    background: rgba(0, 0, 0, 0.6); /* Keep this */
+    backdrop-filter: blur(10px); /* Keep this */
+    border-radius: 15px; /* Keep this */
+    padding: 2rem; /* Keep this */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* Keep this */
+    border: 1px solid rgba(255, 255, 255, 0.18); /* Keep this */
+    transition: transform 0.3s ease; /* Keep this */
+    width: 100%; /* Add this */
+    max-width: 600px; /* Add this */
+    margin: 0 auto; /* Add this */
 }
+
+
 
 .card:hover {
     transform: translateY(-5px);
