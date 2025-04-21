@@ -181,23 +181,19 @@ body {
 
 /* Main Content Styles */
 .container {
-    width: 100%;       /* Full width of the viewport */
-    max-width: 100%;   /* Ensure it doesn't exceed 100% width */
-    margin: 0 auto;    /* Center the container */
-    padding: 2rem 1rem; /* Add some padding */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
     position: relative;
     z-index: 1;
 }
-
-
-
-
 
 .header-content {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1rem;
+    text-align: center;
 }
 
 .back-button {
@@ -263,11 +259,9 @@ header h1 {
 main {
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 2rem;
-    padding: 0 1rem;
+    align-items: center;
 }
-
 
 .card {
     background: rgba(0, 0, 0, 0.6);
@@ -277,12 +271,8 @@ main {
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     border: 1px solid rgba(255, 255, 255, 0.18);
     transition: transform 0.3s ease;
-    width: 100%;  /* Make sure the card uses full width */
-    max-width: 600px;  /* Set a max-width so it doesn't grow too large */
-    margin: 0 auto;  /* Center the card horizontally */
+    width: 100%;
 }
-
-
 
 .card:hover {
     transform: translateY(-5px);
@@ -291,6 +281,7 @@ main {
 
 .current-level {
     text-align: center;
+    max-width: 400px;
 }
 
 #current-level-value {
@@ -306,16 +297,21 @@ main {
     font-size: 0.9rem;
 }
 
+.chart-container {
+    width: 100%;
+}
+
 .chart-header {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
+    gap: 1rem;
     margin-bottom: 1.5rem;
 }
 
-.chart-header h2 {
-    color: #fff;
-    margin: 0;
+.chart-title {
+    text-align: center;
+    width: 100%;
 }
 
 .time-range-selector {
@@ -356,33 +352,65 @@ footer a:hover {
     border-color: #fff;
 }
 
-@media (max-width: 767px) {
-    main {
-        padding: 0 1rem; /* Adjust padding for mobile */
-        align-items: center;
-    }
-
+/* Mobile Optimizations */
+@media (max-width: 768px) {
     .container {
-        padding: 1rem; /* Adjust to make sure things are centered */
+        padding: 1rem;
     }
 
-    .card {
-        width: 90%; /* Slightly reduce width for better spacing on mobile */
+    .header-content h1 {
+        font-size: 1.8rem;
     }
 
-    header h1 {
-        font-size: 2.5rem; /* Smaller font size on smaller screens */
+    .current-level {
+        padding: 1.5rem;
     }
 
     #current-level-value {
-        font-size: 3rem; /* Adjust font size on smaller screens */
+        font-size: 3rem;
     }
 
-    .chart-header h2 {
-        font-size: 1.5rem; /* Smaller chart header */
+    .chart-container {
+        margin: 0 -1rem;
+        width: calc(100% + 2rem);
+        border-radius: 0;
+    }
+
+    .chart-wrapper {
+        margin: 0 -1rem;
+        padding: 0;
+    }
+
+    .chart-header {
+        padding: 0 1rem;
+    }
+
+    #levelChart {
+        height: 300px !important;
     }
 }
 
+/* Desktop Layout */
+@media (min-width: 769px) {
+    main {
+        grid-template-columns: 1fr 2fr;
+        display: grid;
+    }
+
+    .header-content h1 {
+        font-size: 2.5rem;
+    }
+
+    .chart-header {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .chart-wrapper {
+        margin: 0;
+        padding: 0;
+    }
+}
 
 /* Chart.js canvas background */
 #levelChart {

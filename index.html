@@ -28,14 +28,8 @@
             <div class="favorites-section">
                 <h2>Favorite Lakes</h2>
                 <div class="favorites-list" id="favoritesList">
-                    <!-- Each favorite lake will have its own star, with 'favorited' class toggled -->
-                    <div class="favorite-item">
-                        <span>Lake Name</span>
-                        <i class="fas fa-star favorite-icon" data-site-id="03128000"></i>
-                    </div>
-                    <!-- Repeat for each lake -->
+                    <!-- Favorites will be populated here -->
                 </div>
-                
             </div>
         </div>
     </div>
@@ -61,11 +55,12 @@
 
             <div class="chart-container card">
                 <div class="chart-header">
-                    <h2>Lake Level History</h2>
+                    <div class="chart-title">
+                        <h2>Lake Level History</h2>
+                    </div>
                     <div class="chart-controls">
                         <button id="favoriteButton" class="favorite-button">
-                            <!-- Add the favorite-icon class for styling and data-site-id for tracking the lake -->
-                            <i class="fas fa-star favorite-icon" data-site-id="03128000"></i>
+                            <i class="far fa-star"></i>
                         </button>
                         <select id="timeRange" class="time-range-selector">
                             <option value="7">Last 7 Days</option>
@@ -73,9 +68,10 @@
                             <option value="365">Last Year</option>
                         </select>
                     </div>
-                    
                 </div>
-                <canvas id="levelChart"></canvas>
+                <div class="chart-wrapper">
+                    <canvas id="levelChart"></canvas>
+                </div>
             </div>
         </main>
 
