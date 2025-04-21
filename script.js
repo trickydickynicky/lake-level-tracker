@@ -120,7 +120,201 @@ const lakes = [
         location: 'Mahoning County, OH',
         parameterCd: '62615'
     },
-    
+    {
+        name: 'Whitney Point Lake',
+        siteId: '01511000',
+        location: 'Broome County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Owasco Lake',
+        siteId: '04235396',
+        location: 'Cayuga County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Chautauqua Lake',
+        siteId: '03013946',
+        location: 'Chautauqua County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Richelieu R (Lake Champlain)',
+        siteId: '04295000',
+        location: 'Clinton County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Cannonsville Reservoir',
+        siteId: '01423910',
+        location: 'Delaware County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'East Sidney Lake',
+        siteId: '01499500',
+        location: 'Delaware County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Pepacton Reservoir',
+        siteId: '01414750',
+        location: 'Cayuga County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Lake Champlain',
+        siteId: '04294413',
+        location: 'Essex County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Lake George',
+        siteId: '04278000',
+        location: 'Essex County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Sixth Lake',
+        siteId: '04253300',
+        location: 'Hamilton County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'First Lake',
+        siteId: '04253400',
+        location: 'Herkimer County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Stillwater Reservoir',
+        siteId: '04256500',
+        location: 'Herkimer County, NY',
+        parameterCd: '62615'
+    },  
+    {
+        name: 'Conesus Lake',
+        siteId: '04227980',
+        location: 'Livingston County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Hempstead Lake',
+        siteId: '0131079450',
+        location: 'Nassau County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Hinckley Reservoir',
+        siteId: '01343900',
+        location: 'Oneida County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Onondaga CR at Flood Ctrl Dam',
+        siteId: '04238500',
+        location: 'Onondaga County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Onondaga Lake',
+        siteId: '04240495',
+        location: 'Onondaga County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Baisley Pond',
+        siteId: '01311820',
+        location: 'Queens County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Conselyeas Pond',
+        siteId: '01311815',
+        location: 'Queens County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Springfield Park Pond',
+        siteId: '01311816',
+        location: 'Queens County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Clove Lake',
+        siteId: '01376547',
+        location: 'Richmond County, NY',
+        parameterCd: '62614'
+    },
+    {
+        name: 'Ohrback Lake',
+        siteId: '01376531',
+        location: 'Richmond County, NY',
+        parameterCd: '62614'
+    },
+    {
+        name: 'Great Sacandaga Lake',
+        siteId: '01323500',
+        location: 'Saratoga County, NY',
+        parameterCd: '62614'
+    },
+    {
+        name: 'Saratoga Lake',
+        siteId: '01330884',
+        location: 'Saratoga County, NY',
+        parameterCd: '62614'
+    },
+    {
+        name: 'Schoharie Reservoir',
+        siteId: '01350100',
+        location: 'Schoharie County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Almond Lake',
+        siteId: '01523000',
+        location: 'Steuben County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Arkport Reservoir',
+        siteId: '01521000',
+        location: 'Steuben County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Georgica Pond',
+        siteId: '01304705',
+        location: 'Suffolk County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Laurel Lake',
+        siteId: '01304250',
+        location: 'Suffolk County, NY',
+        parameterCd: '62615'
+    },
+    {
+        name: 'Neversink Reservoir',
+        siteId: '01435900',
+        location: 'Sullivan County, NY',
+        parameterCd: '62615'
+    },  
+    {
+        name: 'Cayuga Inlet (Cayuga Lake)',
+        siteId: '04233500',
+        location: 'Tompkins County, NY',
+        parameterCd: '62615'
+    },  
+    {
+        name: 'Lake Champlain North',
+        siteId: '04279085',
+        location: 'Washington County, NY',
+        parameterCd: '62615'
+    },
+
+
+
  
 ];
 
