@@ -174,10 +174,11 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 0 1rem;
     position: relative;
     z-index: 1;
 }
+
 
 .header-content {
     display: flex;
@@ -264,7 +265,8 @@ main {
     border: 1px solid rgba(255, 255, 255, 0.18);
     transition: transform 0.3s ease;
     width: 100%;
-    max-width: 800px; /* or 600px if you want it narrower */
+    max-width: 600px; /* or 600px if you want it narrower */
+    margin: 0 auto;
 }
 
 .card:hover {
@@ -339,15 +341,33 @@ footer a:hover {
     border-color: #fff;
 }
 
-@media (min-width: 768px) {
+@media (max-width: 767px) {
     main {
-        grid-template-columns: 1fr 2fr;
+        padding: 0 1rem; /* Adjust padding for mobile */
+        align-items: center;
     }
-    
+
+    .container {
+        padding: 1rem; /* Adjust to make sure things are centered */
+    }
+
+    .card {
+        width: 90%; /* Slightly reduce width for better spacing on mobile */
+    }
+
     header h1 {
-        font-size: 4rem;
+        font-size: 2.5rem; /* Smaller font size on smaller screens */
+    }
+
+    #current-level-value {
+        font-size: 3rem; /* Adjust font size on smaller screens */
+    }
+
+    .chart-header h2 {
+        font-size: 1.5rem; /* Smaller chart header */
     }
 }
+
 
 /* Chart.js canvas background */
 #levelChart {
