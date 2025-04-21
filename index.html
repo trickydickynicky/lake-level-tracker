@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lake Level Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="background-image"></div>
+    <div class="overlay"></div>
+    
+    <!-- Launch Screen -->
+    <div id="launchScreen" class="launch-screen">
+        <div class="launch-content">
+            <h1>Lake Level Tracker</h1>
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="lakeSearch" placeholder="Search for a lake...">
+                </div>
+                <div class="search-results" id="searchResults">
+                    <!-- Results will be populated here -->
+                </div>
+            </div>
+            <div class="favorites-section">
+                <h2>Favorite Lakes</h2>
+                <div class="favorites-list" id="favoritesList">
+                    <!-- Each favorite lake will have its own star, with 'favorited' class toggled -->
+                    <div class="favorite-item">
+                        <span>Lake Name</span>
+                        <i class="fas fa-star favorite-icon" data-site-id="03128000"></i>
+                    </div>
+                    <!-- Repeat for each lake -->
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content (Hidden by default) -->
+    <div id="mainContent" class="container" style="display: none;">
+        <header>
+            <div class="header-content">
+                <button id="backButton" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Search
+                </button>
+                <h1 id="lakeName">Tappan Lake Level Tracker</h1>
+                <p class="site-id">USGS Site ID: <span id="siteId">03128000</span></p>
+            </div>
+        </header>
+        
+        <main>
+            <div class="current-level card">
+                <h2>Current Lake Level</h2>
+                <div id="current-level-value">Loading...</div>
+                <div id="last-updated">Last updated: --</div>
+            </div>
+
+            <div class="chart-container card">
+                <div class="chart-header">
+                    <h2>Lake Level History</h2>
+                    <div class="chart-controls">
+                        <button id="favoriteButton" class="favorite-button">
+                            <!-- Add the favorite-icon class for styling and data-site-id for tracking the lake -->
+                            <i class="fas fa-star favorite-icon" data-site-id="03128000"></i>
+                        </button>
+                        <select id="timeRange" class="time-range-selector">
+                            <option value="7">Last 7 Days</option>
+                            <option value="30">Last 30 Days</option>
+                            <option value="365">Last Year</option>
+                        </select>
+                    </div>
+                    
+                </div>
+                <canvas id="levelChart"></canvas>
+            </div>
+        </main>
+
+        <footer>
+            <p>Data provided by the <a href="https://waterdata.usgs.gov" target="_blank">USGS Water Data</a></p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
