@@ -374,23 +374,47 @@ footer a:hover {
         margin: 0;
         width: 100%;
         border-radius: 10px;
-        padding: 1rem; /* Add padding around chart */
+        padding: 1rem;
     }
 
     .chart-wrapper {
         padding: 0;
         margin: 0;
+        min-height: 500px; /* Ensure enough vertical space */
     }
 
     .chart-header {
         flex-direction: column;
         align-items: center;
         padding: 0;
+        margin-bottom: 2rem;
+    }
+
+    .chart-title h2 {
+        margin-bottom: 1rem;
+    }
+
+    .chart-controls {
+        width: 100%;
+        justify-content: center;
+        gap: 1.5rem;
+    }
+
+    .time-range-selector {
+        padding: 0.8rem 1rem;
+        font-size: 1.1rem;
+        min-width: 140px;
     }
 
     #levelChart {
-        height: 400px !important; /* More vertical room */
+        height: 500px !important;
         width: 100% !important;
+    }
+
+    /* Adjust Chart.js defaults for mobile */
+    canvas#levelChart {
+        margin: 0 -1rem;
+        width: calc(100% + 2rem) !important;
     }
 }
 
@@ -421,4 +445,15 @@ footer a:hover {
     background: rgba(0, 0, 0, 0.3);
     border-radius: 10px;
     padding: 1rem;
+}
+
+/* Update the Chart.js options in the JavaScript */
+.chart-container {
+    position: relative;
+}
+
+/* Ensure tooltips are readable on mobile */
+.chartjs-tooltip {
+    font-size: 14px !important;
+    padding: 8px 12px !important;
 } 

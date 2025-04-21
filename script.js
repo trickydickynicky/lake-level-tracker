@@ -329,6 +329,10 @@ function updateChart(data, days) {
     
     const formatDate = (date, days) => {
         if (days <= 7) {
+            // For mobile, show shorter date format
+            if (window.innerWidth <= 768) {
+                return `${date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })} ${date.toLocaleTimeString('en-US', { hour: 'numeric' })}`;
+            }
             return `${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
         } else if (days <= 30) {
             return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -343,6 +347,9 @@ function updateChart(data, days) {
     if (levelChart) {
         levelChart.destroy();
     }
+
+    // Determine if we're on mobile
+    const isMobile = window.innerWidth <= 768;
     
     levelChart = new Chart(ctx, {
         type: 'line',
@@ -356,21 +363,27 @@ function updateChart(data, days) {
                 borderWidth: 2,
                 fill: true,
                 tension: 0.1,
-                pointRadius: days <= 7 ? 0 : 2
+                pointRadius: days <= 7 ? 0 : (isMobile ? 0 : 2)
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
-            aspectRatio: 2,
+            maintainAspectRatio: false,
+            aspectRatio: isMobile ? 1 : 2,
             plugins: {
                 legend: {
-                    display: true,
-                    position: 'top'
+                    display: false // Hide legend on mobile
                 },
                 tooltip: {
                     mode: 'index',
-                    intersect: false
+                    intersect: false,
+                    padding: isMobile ? 12 : 6,
+                    titleFont: {
+                        size: isMobile ? 14 : 12
+                    },
+                    bodyFont: {
+                        size: isMobile ? 14 : 12
+                    }
                 }
             },
             scales: {
@@ -378,25 +391,37 @@ function updateChart(data, days) {
                     beginAtZero: false,
                     title: {
                         display: true,
-                        text: 'Feet'
+                        text: 'Feet',
+                        font: {
+                            size: isMobile ? 14 : 12
+                        }
                     },
                     grid: {
                         display: true,
-                        color: 'rgba(0, 0, 0, 0.1)'
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        font: {
+                            size: isMobile ? 14 : 12
+                        },
+                        padding: isMobile ? 8 : 4
                     }
                 },
                 x: {
                     title: {
-                        display: true,
-                        text: 'Date'
+                        display: false
                     },
                     grid: {
                         display: false
                     },
                     ticks: {
-                        maxRotation: 45,
-                        minRotation: 45,
-                        maxTicksLimit: days <= 7 ? 10 : (days <= 30 ? 15 : 12)
+                        maxRotation: isMobile ? 45 : 45,
+                        minRotation: isMobile ? 45 : 45,
+                        maxTicksLimit: isMobile ? 6 : (days <= 7 ? 10 : (days <= 30 ? 15 : 12)),
+                        font: {
+                            size: isMobile ? 12 : 11
+                        },
+                        padding: isMobile ? 8 : 4
                     }
                 }
             },
@@ -404,6 +429,14 @@ function updateChart(data, days) {
                 mode: 'nearest',
                 axis: 'x',
                 intersect: false
+            },
+            layout: {
+                padding: {
+                    left: isMobile ? 10 : 0,
+                    right: isMobile ? 10 : 0,
+                    top: isMobile ? 20 : 0,
+                    bottom: isMobile ? 10 : 0
+                }
             }
         }
     });
@@ -422,7 +455,7 @@ fetchLakeData(currentTimeRange);
 setInterval(() => fetchLakeData(currentTimeRange), 15 * 60 * 1000); 
 // Resize chart when window resizes
 window.addEventListener('resize', () => {
-    if (levelChart) {
-        levelChart.resize();
+    if (currentLake) {
+        fetchLakeData(currentTimeRange);
     }
 });
