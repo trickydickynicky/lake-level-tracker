@@ -451,6 +451,16 @@ function selectLake(lake) {
     lakeName.textContent = `${lake.name} Level Tracker`;
     siteId.textContent = lake.siteId;
     updateFavoriteButton();
+
+// Show/hide thresholds card for Tappan Lake
+const thresholdsBox = document.getElementById('thresholds-box');
+if (lake.siteId === '03128000') { // Tappan Lake siteId
+    thresholdsBox.style.display = 'block';
+} else {
+    thresholdsBox.style.display = 'none';
+}
+
+
     fetchLakeData(currentTimeRange);
 }
 

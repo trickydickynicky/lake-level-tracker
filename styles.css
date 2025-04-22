@@ -457,3 +457,56 @@ footer a:hover {
     font-size: 14px !important;
     padding: 8px 12px !important;
 } 
+
+
+.thresholds {
+    max-width: 400px; /* Matches .current-level */
+    text-align: left; /* Align text left for readability */
+}
+
+.thresholds h2 {
+    font-size: 1.5rem; /* Matches .current-level h2 */
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Matches header h2 */
+}
+
+.thresholds ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8); /* Matches .last-updated */
+    font-size: 0.95rem; /* Slightly smaller for list items */
+}
+
+.thresholds li {
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.thresholds .active-threshold {
+    color: #ff4444; /* Red for active thresholds */
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .thresholds {
+        padding: 1.5rem; /* Matches .current-level on mobile */
+        max-width: 100%;
+    }
+
+    .thresholds h2 {
+        font-size: 1.3rem; /* Matches .current-level h2 on mobile */
+    }
+
+    .thresholds ul {
+        font-size: 0.9rem;
+    }
+}
+
+@media (min-width: 769px) {
+    .thresholds {
+        grid-column: 1; /* Aligns with .current-level in grid */
+    }
+}
