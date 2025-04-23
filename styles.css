@@ -462,6 +462,7 @@ footer a:hover {
 .thresholds {
     max-width: 400px; /* Matches .current-level */
     text-align: left; /* Align text left for readability */
+    text-align: center; /* Center the title */
 }
 
 .thresholds h2 {
@@ -470,6 +471,7 @@ footer a:hover {
     color: #fff;
     margin-bottom: 1rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Matches header h2 */
+    text-align: center; /* Center the title */
 }
 
 .thresholds ul {
