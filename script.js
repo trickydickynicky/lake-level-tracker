@@ -452,14 +452,19 @@ function selectLake(lake) {
     siteId.textContent = lake.siteId;
     updateFavoriteButton();
 
-// Show/hide thresholds card for Tappan Lake
-const thresholdsBox = document.getElementById('thresholds-box');
-if (lake.siteId === '03128000') { // Tappan Lake siteId
-    thresholdsBox.style.display = 'block';
-} else {
-    thresholdsBox.style.display = 'none';
-}
-
+    // Show/hide thresholds card and weather for Tappan Lake
+    const thresholdsBox = document.getElementById('thresholds-box');
+    const weatherBox = document.getElementById('weather-box');
+    
+    if (lake.siteId === '03128000') { // Tappan Lake siteId
+        thresholdsBox.style.display = 'block';
+        weatherBox.style.display = 'block';
+        // Only initialize weather for Tappan Lake
+        updateWeather();
+    } else {
+        thresholdsBox.style.display = 'none';
+        weatherBox.style.display = 'none';
+    }
 
     fetchLakeData(currentTimeRange);
 }
@@ -481,8 +486,11 @@ favoriteButton.addEventListener('click', () => {
     }
 });
 
-// Initialize favorites list
-updateFavoritesList();
+// Initialize when DOM is fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize favorites list
+    updateFavoritesList();
+});
 
 // Existing lake data fetching and chart code
 const IV_API_URL = 'https://waterservices.usgs.gov/nwis/iv/';
@@ -663,3 +671,77 @@ window.addEventListener('resize', () => {
         fetchLakeData(currentTimeRange);
     }
 });
+
+// Weather configuration
+const OPENWEATHER_API_KEY = '5a4493fab9fbc015750a5d9a58224756';
+const CADIZ_LAT = 40.2728;
+const CADIZ_LON = -81.0023;
+
+// Weather functions
+async function fetchWeatherData() {
+    try {
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${CADIZ_LAT}&lon=${CADIZ_LON}&appid=${OPENWEATHER_API_KEY}&units=imperial`);
+        if (!response.ok) {
+            throw new Error(`Weather data fetch failed: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('Weather data received:', data); // Debug log
+        return data;
+    } catch (error) {
+        console.error('Error fetching weather data:', error);
+        return null;
+    }
+}
+
+function updateWeatherDisplay(weatherData) {
+    const weatherBox = document.getElementById('weather-box');
+    
+    if (!weatherData) {
+        weatherBox.innerHTML = `
+            <div class="weather-content">
+                <p>Unable to load weather data</p>
+            </div>
+        `;
+        return;
+    }
+
+    const weatherIcon = document.getElementById('weather-icon');
+    const weatherTemp = document.getElementById('weather-temp');
+    const weatherDescription = document.getElementById('weather-description');
+    const weatherHumidity = document.getElementById('weather-humidity');
+    const weatherWind = document.getElementById('weather-wind');
+
+    // Update weather icon
+    const iconCode = weatherData.weather[0].icon;
+    weatherIcon.src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+    
+    // Update temperature
+    weatherTemp.textContent = `${Math.round(weatherData.main.temp)}°F`;
+    
+    // Update description
+    weatherDescription.textContent = weatherData.weather[0].description;
+    
+    // Update humidity
+    weatherHumidity.textContent = `Humidity: ${weatherData.main.humidity}%`;
+    
+    // Update wind speed
+    weatherWind.textContent = `Wind: ${Math.round(weatherData.wind.speed)} mph`;
+
+    // Show the weather box
+    weatherBox.style.display = 'block';
+}
+
+async function updateWeather() {
+    console.log('Updating weather...'); // Debug log
+    const weatherData = await fetchWeatherData();
+    updateWeatherDisplay(weatherData);
+}
+
+// Initialize function
+async function initialize() {
+    // Initial weather update
+    await updateWeather();
+    
+    // Update weather every 30 minutes
+    setInterval(updateWeather, 30 * 60 * 1000);
+}

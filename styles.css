@@ -3,15 +3,15 @@
     padding: 0;
     box-sizing: border-box;
 }
+
 /* Global Styles for body and html */
 html, body {
-    height: 100%; /* Make sure they take up full height */
-    width: 100%;  /* Make sure they take up full width */
-    margin: 0;    /* Remove any default margin */
-    padding: 0;   /* Remove any default padding */
-    overflow-x: hidden; /* Disable horizontal scroll */
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
-
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -103,7 +103,7 @@ body {
 
 .search-results {
     max-width: 600px;
-    margin: 1rem auto 0;
+    margin: 1rem auto #000000;
     background: rgba(0, 0, 0, 0.6);
     border-radius: 15px;
     padding: 1rem;
@@ -169,6 +169,7 @@ body {
 .favorite-item .remove-favorite:hover {
     color: #fff;
 }
+
 .favorite-icon {
     color: rgba(255, 255, 255, 0.5);
     cursor: pointer;
@@ -352,6 +353,79 @@ footer a:hover {
     border-color: #fff;
 }
 
+.thresholds {
+    max-width: 400px; /* Matches .current-level */
+    text-align: left; /* Align text left for readability */
+}
+
+.thresholds h2 {
+    font-size: 1.5rem; /* Matches .current-level h2 */
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Matches header h2 */
+    text-align: center; /* Center the title */
+}
+
+.thresholds ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem; /* Slightly smaller for list items */
+}
+
+.thresholds li {
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.thresholds .active-threshold {
+    color: #ff4444; /* Red for active thresholds */
+    font-weight: bold;
+}
+
+.weather-forecast {
+    max-width: 600px; /* Slightly wider for forecast items */
+    text-align: center; /* Center title and content */
+}
+
+.weather-forecast h2 {
+    font-size: 1.5rem; /* Matches .current-level h2 */
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Matches header h2 */
+    text-align: center; /* Center the title */
+}
+
+.forecast-container {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto; /* Horizontal scroll on mobile */
+    padding: 0.5rem 0;
+}
+
+.forecast-item {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 1rem;
+    min-width: 120px; /* Fixed width for each item */
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8); /* Matches .thresholds ul */
+    font-size: 0.95rem; /* Matches .thresholds ul */
+}
+
+.forecast-item img {
+    width: 50px;
+    height: 50px;
+    margin: 0.5rem 0;
+}
+
+.forecast-item p {
+    margin: 0.25rem 0;
+}
+
 /* Mobile Optimizations */
 @media (max-width: 768px) {
     .container {
@@ -364,6 +438,38 @@ footer a:hover {
 
     .current-level {
         padding: 1.5rem;
+    }
+
+    .thresholds {
+        padding: 1.5rem; /* Matches .current-level on mobile */
+        max-width: 100%;
+    }
+
+    .thresholds h2 {
+        font-size: 1.3rem; /* Matches .current-level h2 on mobile */
+        text-align: center; /* Ensure centering on mobile */
+    }
+
+    .thresholds ul {
+        font-size: 0.9rem;
+    }
+
+    .weather-forecast {
+        padding: 1.5rem; /* Matches .current-level on mobile */
+        max-width: 100%;
+    }
+
+    .weather-forecast h2 {
+        font-size: 1.3rem; /* Matches .current-level h2 on mobile */
+        text-align: center; /* Ensure centering on mobile */
+    }
+
+    .forecast-container {
+        flex-wrap: nowrap; /* Prevent wrapping on mobile */
+    }
+
+    .forecast-item {
+        font-size: 0.9rem; /* Matches .thresholds ul on mobile */
     }
 
     #current-level-value {
@@ -416,6 +522,20 @@ footer a:hover {
         margin: 0 -1rem;
         width: calc(100% + 2rem) !important;
     }
+
+    .weather-card {
+        padding: 1.5rem;
+        max-width: 100%;
+    }
+
+    #weather-temp {
+        font-size: 2rem;
+    }
+
+    .weather-icon-temp img {
+        width: 56px;
+        height: 56px;
+    }
 }
 
 /* Desktop Layout */
@@ -423,6 +543,26 @@ footer a:hover {
     main {
         grid-template-columns: 1fr 2fr;
         display: grid;
+    }
+
+    .current-level {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .thresholds {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .weather-forecast {
+        grid-column: 1;
+        grid-row: 3;
+    }
+
+    .chart-container {
+        grid-column: 2;
+        grid-row: 1 / span 3; /* Spans three rows */
     }
 
     .header-content h1 {
@@ -438,6 +578,21 @@ footer a:hover {
         margin: 0;
         padding: 0;
     }
+
+    .weather-card {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .thresholds {
+        grid-column: 1;
+        grid-row: 3;
+    }
+
+    .weather-forecast {
+        grid-column: 1;
+        grid-row: 4;
+    }
 }
 
 /* Chart.js canvas background */
@@ -447,68 +602,64 @@ footer a:hover {
     padding: 1rem;
 }
 
-/* Update the Chart.js options in the JavaScript */
-.chart-container {
-    position: relative;
-}
-
 /* Ensure tooltips are readable on mobile */
 .chartjs-tooltip {
     font-size: 14px !important;
     padding: 8px 12px !important;
-} 
-
-
-.thresholds {
-    max-width: 400px; /* Matches .current-level */
-    text-align: left; /* Align text left for readability */
-    text-align: center; /* Center the title */
 }
 
-.thresholds h2 {
-    font-size: 1.5rem; /* Matches .current-level h2 */
-    font-weight: 500;
+.weather-card {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     color: #fff;
-    margin-bottom: 1rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Matches header h2 */
-    text-align: center; /* Center the title */
 }
 
-.thresholds ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    color: rgba(255, 255, 255, 0.8); /* Matches .last-updated */
-    font-size: 0.95rem; /* Slightly smaller for list items */
+.weather-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.thresholds li {
-    margin-bottom: 0.75rem;
-    line-height: 1.4;
+.weather-icon-temp {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
 }
 
-.thresholds .active-threshold {
-    color: #ff4444; /* Red for active thresholds */
+.weather-icon-temp img {
+    width: 50px;
+    height: 50px;
+    filter: brightness(1.2);
+}
+
+.weather-icon-temp span {
+    font-size: 2em;
     font-weight: bold;
 }
 
-@media (max-width: 768px) {
-    .thresholds {
-        padding: 1.5rem; /* Matches .current-level on mobile */
-        max-width: 100%;
-    }
-
-    .thresholds h2 {
-        font-size: 1.3rem; /* Matches .current-level h2 on mobile */
-    }
-
-    .thresholds ul {
-        font-size: 0.9rem;
-    }
+.weather-details {
+    text-align: center;
 }
 
-@media (min-width: 769px) {
-    .thresholds {
-        grid-column: 1; /* Aligns with .current-level in grid */
-    }
+.weather-details p {
+    margin: 5px 0;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+#weather-temp {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+#weather-description {
+    font-size: 1.2rem;
+    text-transform: capitalize;
 }

@@ -47,13 +47,25 @@
         </header>
         
         <main>
-            <div class="current-level card">
-                <h2>Current Lake Level</h2>
+            <div class="card current-level">
+                <h2>Current Level</h2>
                 <div id="current-level-value">Loading...</div>
                 <div id="last-updated">Last updated: --</div>
             </div>
-           
-            
+
+            <div class="weather-card" id="weather-box">
+                <div class="weather-content">
+                    <div class="weather-icon-temp">
+                        <img id="weather-icon" src="" alt="Weather icon">
+                        <span id="weather-temp"></span>
+                    </div>
+                    <div class="weather-details">
+                        <p id="weather-description"></p>
+                        <p id="weather-humidity"></p>
+                        <p id="weather-wind"></p>
+                    </div>
+                </div>
+            </div>
 
             <div class="chart-container card">
                 <div class="chart-header">
@@ -76,7 +88,7 @@
                 </div>
             </div>
            
-            <div class="thresholds card" id="thresholds-box" style="display: none;">
+            <div class="card thresholds" id="thresholds-box" style="display: none;">
                 <h2>Tappan Lake Thresholds</h2>
                 <ul id="thresholds-list">
                     <li>Below 896.3 ft: Boat ramp closed</li>
