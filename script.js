@@ -606,7 +606,8 @@ function updateChart(data, days) {
                         text: 'Feet',
                         font: {
                             size: isMobile ? 14 : 12
-                        }
+                        },
+                        color: '#ffffff'
                     },
                     grid: {
                         display: true,
@@ -616,7 +617,8 @@ function updateChart(data, days) {
                         font: {
                             size: isMobile ? 14 : 12
                         },
-                        padding: isMobile ? 8 : 4
+                        padding: isMobile ? 8 : 4,
+                        color: '#ffffff'
                     }
                 },
                 x: {
@@ -633,7 +635,8 @@ function updateChart(data, days) {
                         font: {
                             size: isMobile ? 12 : 11
                         },
-                        padding: isMobile ? 8 : 4
+                        padding: isMobile ? 8 : 4,
+                        color: '#ffffff'
                     }
                 }
             },
