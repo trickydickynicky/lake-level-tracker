@@ -464,7 +464,7 @@ function selectLake(lake) {
         weatherBox.style.display = 'none';
     }
 
-    fetchLakeData(currentTimeRange);
+    fetchLakeData(currentTimeRange, currentTempTimeRange);
 }
 
 // Back button
@@ -497,25 +497,28 @@ document.addEventListener('DOMContentLoaded', function() {
 const IV_API_URL = 'https://waterservices.usgs.gov/nwis/iv/';
 const DV_API_URL = 'https://waterservices.usgs.gov/nwis/dv/';
 
-async function fetchLakeData(days = 7) {
+async function fetchLakeData(levelDays = 7, tempDays = 7) {
     if (!currentLake) return;
     
     try {
         const endDate = new Date();
-        const startDate = new Date();
-        startDate.setDate(startDate.getDate() - days);
+        const levelStartDate = new Date();
+        const tempStartDate = new Date();
+        levelStartDate.setDate(levelStartDate.getDate() - levelDays);
+        tempStartDate.setDate(tempStartDate.getDate() - tempDays);
         
         const formatDate = (date) => {
             return date.toISOString().split('T')[0];
         };
 
-        const apiUrl = days >= 30 ? DV_API_URL : IV_API_URL;
+        const levelApiUrl = levelDays >= 30 ? DV_API_URL : IV_API_URL;
+        const tempApiUrl = tempDays >= 30 ? DV_API_URL : IV_API_URL;
         const parameterCd = currentLake.parameterCd || '62614'; // fallback if missing;
         
-        // Fetch both level and temperature data
+        // Fetch both level and temperature data with their respective time ranges
         const [levelResponse, tempResponse] = await Promise.all([
-            fetch(`${apiUrl}?format=json&sites=${currentLake.siteId}&parameterCd=${parameterCd}&startDT=${formatDate(startDate)}&endDT=${formatDate(endDate)}&siteStatus=all`),
-            fetch(`${apiUrl}?format=json&sites=03127989&parameterCd=00010&startDT=${formatDate(startDate)}&endDT=${formatDate(endDate)}&siteStatus=all`)
+            fetch(`${levelApiUrl}?format=json&sites=${currentLake.siteId}&parameterCd=${parameterCd}&startDT=${formatDate(levelStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`),
+            fetch(`${tempApiUrl}?format=json&sites=03127989&parameterCd=00010&startDT=${formatDate(tempStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`)
         ]);
         
         const [levelData, tempData] = await Promise.all([
@@ -534,13 +537,13 @@ async function fetchLakeData(days = 7) {
             document.getElementById('current-level-value').textContent = `${currentLevel.toFixed(2)} ft`;
             document.getElementById('last-updated').textContent = `Last updated: ${lastUpdated.toLocaleString()}`;
             
-            updateLevelChart(values, days);
+            updateLevelChart(values, levelDays);
         }
 
         if (tempData.value.timeSeries && tempData.value.timeSeries.length > 0) {
             const timeSeries = tempData.value.timeSeries[0];
             const values = timeSeries.values[0].value;
-            updateTempChart(values, days);
+            updateTempChart(values, tempDays);
         }
     } catch (error) {
         console.error('Error fetching lake data:', error);
@@ -801,24 +804,24 @@ function updateTempChart(data, days) {
 document.getElementById('timeRange').addEventListener('change', (e) => {
     currentTimeRange = parseInt(e.target.value);
     if (currentLake) {
-        fetchLakeData(currentTimeRange);
+        fetchLakeData(currentTimeRange, currentTempTimeRange);
     }
 });
 
 document.getElementById('tempTimeRange').addEventListener('change', (e) => {
     currentTempTimeRange = parseInt(e.target.value);
     if (currentLake) {
-        fetchLakeData(currentTempTimeRange);
+        fetchLakeData(currentTimeRange, currentTempTimeRange);
     }
 });
 
 // Fetch data immediately and then every 15 minutes
-fetchLakeData(currentTimeRange);
+fetchLakeData(currentTimeRange, currentTempTimeRange);
 
 // Resize charts when window resizes
 window.addEventListener('resize', () => {
     if (currentLake) {
-        fetchLakeData(currentTimeRange);
+        fetchLakeData(currentTimeRange, currentTempTimeRange);
     }
 });
 
