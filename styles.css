@@ -459,13 +459,13 @@ footer a:hover {
     }
 
     .thresholds {
-        padding: 1.5rem; /* Matches .current-level on mobile */
+        padding: 1.5rem;
         max-width: 100%;
     }
 
     .thresholds h2 {
-        font-size: 1.3rem; /* Matches .current-level h2 on mobile */
-        text-align: center; /* Ensure centering on mobile */
+        font-size: 1.3rem;
+        text-align: center;
     }
 
     .thresholds ul {
@@ -473,67 +473,75 @@ footer a:hover {
     }
 
     .weather-forecast {
-        padding: 1.5rem; /* Matches .current-level on mobile */
+        padding: 1.5rem;
         max-width: 100%;
     }
 
     .weather-forecast h2 {
-        font-size: 1.3rem; /* Matches .current-level h2 on mobile */
-        text-align: center; /* Ensure centering on mobile */
+        font-size: 1.3rem;
+        text-align: center;
     }
 
     .forecast-container {
-        flex-wrap: nowrap; /* Prevent wrapping on mobile */
+        flex-wrap: nowrap;
     }
 
     .forecast-item {
-        font-size: 0.9rem; /* Matches .thresholds ul on mobile */
+        font-size: 0.9rem;
     }
 
     #current-level-value {
         font-size: 3rem;
     }
 
+    .charts-section {
+        gap: 2rem;
+        width: 100%;
+    }
+
     .chart-container {
-        margin-bottom: 1.5rem;
+        margin-bottom: 0;
+        padding: 1.5rem;
     }
 
     .chart-wrapper {
-        height: 300px; /* Smaller height on mobile */
+        height: 300px;
+        width: 100%;
     }
 
     .chart-header {
         flex-direction: column;
         align-items: center;
         padding: 0;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
     }
 
     .chart-title h2 {
         margin-bottom: 1rem;
+        font-size: 1.3rem;
     }
 
     .chart-controls {
         width: 100%;
         justify-content: center;
-        gap: 1.5rem;
+        gap: 1rem;
     }
 
     .time-range-selector {
         padding: 0.8rem 1rem;
-        font-size: 1.1rem;
+        font-size: 1rem;
         min-width: 140px;
     }
 
-    #levelChart {
-        height: 500px !important;
+    /* Remove the problematic Chart.js overrides */
+    #levelChart, #tempChart {
         width: 100% !important;
+        height: 100% !important;
     }
 
-    /* Adjust Chart.js defaults for mobile */
-    canvas#levelChart {
-        margin: 0 -1rem;
-        width: calc(100% + 2rem) !important;
+    canvas#levelChart, canvas#tempChart {
+        margin: 0;
+        width: 100% !important;
     }
 
     .weather-card {
@@ -548,10 +556,6 @@ footer a:hover {
     .weather-icon-temp img {
         width: 56px;
         height: 56px;
-    }
-
-    .charts-section {
-        gap: 1.5rem; /* Slightly less gap on mobile */
     }
 }
 
@@ -613,7 +617,7 @@ footer a:hover {
 }
 
 /* Chart.js canvas background */
-#levelChart {
+#levelChart, #tempChart {
     background: rgba(0, 0, 0, 0.3);
     border-radius: 10px;
     padding: 1rem;
