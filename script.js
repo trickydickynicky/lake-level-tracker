@@ -452,18 +452,33 @@ function selectLake(lake) {
     siteId.textContent = lake.siteId;
     updateFavoriteButton();
 
-    // Show/hide thresholds card and weather for Tappan Lake
+    // Show/hide thresholds card, weather, and charts for Tappan Lake
     const thresholdsBox = document.getElementById('thresholds-box');
     const weatherBox = document.getElementById('weather-box');
+    const tempChartContainer = document.getElementById('tempChartContainer');
+    const outflowChartContainer = document.getElementById('outflowChartContainer');
     
     if (lake.siteId === '03128000') { // Tappan Lake siteId
         thresholdsBox.style.display = 'block';
         weatherBox.style.display = 'block';
+        tempChartContainer.style.display = 'block';
+        outflowChartContainer.style.display = 'block';
         // Only initialize weather for Tappan Lake
         updateWeather();
     } else {
         thresholdsBox.style.display = 'none';
         weatherBox.style.display = 'none';
+        tempChartContainer.style.display = 'none';
+        outflowChartContainer.style.display = 'none';
+        // Destroy charts if they exist
+        if (tempChart) {
+            tempChart.destroy();
+            tempChart = null;
+        }
+        if (outflowChart) {
+            outflowChart.destroy();
+            outflowChart = null;
+        }
     }
 
     fetchLakeData(currentTimeRange, currentTempTimeRange, currentOutflowTimeRange);
@@ -523,21 +538,25 @@ async function fetchLakeData(levelDays = 7, tempDays = 7, outflowDays = 7) {
         const outflowApiUrl = outflowDays >= 30 ? DV_API_URL : IV_API_URL;
         const parameterCd = currentLake.parameterCd || '62614'; // fallback if missing;
         
-        // Fetch level, temperature, and outflow data with their respective time ranges
-        const [levelResponse, tempResponse, outflowResponse] = await Promise.all([
-            fetch(`${levelApiUrl}?format=json&sites=${currentLake.siteId}&parameterCd=${parameterCd}&startDT=${formatDate(levelStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`),
-            fetch(`${tempApiUrl}?format=json&sites=03127989&parameterCd=00010&startDT=${formatDate(tempStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`),
-            fetch(`${outflowApiUrl}?format=json&sites=03128500&parameterCd=00060&startDT=${formatDate(outflowStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`)
-        ]);
+        // Prepare API requests
+        const requests = [
+            fetch(`${levelApiUrl}?format=json&sites=${currentLake.siteId}&parameterCd=${parameterCd}&startDT=${formatDate(levelStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`)
+        ];
+
+        // Only add temperature and outflow requests for Tappan Lake
+        if (currentLake.siteId === '03128000') {
+            requests.push(
+                fetch(`${outflowApiUrl}?format=json&sites=03128500&parameterCd=00060&startDT=${formatDate(outflowStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`),
+                fetch(`${tempApiUrl}?format=json&sites=03127989&parameterCd=00010&startDT=${formatDate(tempStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`)
+            );
+        }
         
-        const [levelData, tempData, outflowData] = await Promise.all([
-            levelResponse.json(),
-            tempResponse.json(),
-            outflowResponse.json()
-        ]);
+        // Fetch data
+        const responses = await Promise.all(requests);
+        const data = await Promise.all(responses.map(r => r.json()));
         
-        if (levelData.value.timeSeries && levelData.value.timeSeries.length > 0) {
-            const timeSeries = levelData.value.timeSeries[0];
+        if (data[0].value.timeSeries && data[0].value.timeSeries.length > 0) {
+            const timeSeries = data[0].value.timeSeries[0];
             const values = timeSeries.values[0].value;
             
             const currentValue = values[values.length - 1];
@@ -550,16 +569,19 @@ async function fetchLakeData(levelDays = 7, tempDays = 7, outflowDays = 7) {
             updateLevelChart(values, levelDays);
         }
 
-        if (tempData.value.timeSeries && tempData.value.timeSeries.length > 0) {
-            const timeSeries = tempData.value.timeSeries[0];
-            const values = timeSeries.values[0].value;
-            updateTempChart(values, tempDays);
-        }
+        // Only update outflow and temperature charts for Tappan Lake
+        if (currentLake.siteId === '03128000') {
+            if (data[1].value.timeSeries && data[1].value.timeSeries.length > 0) {
+                const timeSeries = data[1].value.timeSeries[0];
+                const values = timeSeries.values[0].value;
+                updateOutflowChart(values, outflowDays);
+            }
 
-        if (outflowData.value.timeSeries && outflowData.value.timeSeries.length > 0) {
-            const timeSeries = outflowData.value.timeSeries[0];
-            const values = timeSeries.values[0].value;
-            updateOutflowChart(values, outflowDays);
+            if (data[2].value.timeSeries && data[2].value.timeSeries.length > 0) {
+                const timeSeries = data[2].value.timeSeries[0];
+                const values = timeSeries.values[0].value;
+                updateTempChart(values, tempDays);
+            }
         }
     } catch (error) {
         console.error('Error fetching lake data:', error);
