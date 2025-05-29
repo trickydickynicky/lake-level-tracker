@@ -312,17 +312,15 @@ const lakes = [
         location: 'Washington County, NY',
         parameterCd: '62615'
     },
-
-
-
- 
 ];
 
 // State management
 let currentLake = null;
 let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 let levelChart = null;
+let tempChart = null;
 let currentTimeRange = 7;
+let currentTempTimeRange = 7;
 
 // DOM Elements
 const launchScreen = document.getElementById('launchScreen');
@@ -477,6 +475,9 @@ backButton.addEventListener('click', () => {
     if (levelChart) {
         levelChart.destroy();
     }
+    if (tempChart) {
+        tempChart.destroy();
+    }
 });
 
 // Favorite button
@@ -511,14 +512,19 @@ async function fetchLakeData(days = 7) {
         const apiUrl = days >= 30 ? DV_API_URL : IV_API_URL;
         const parameterCd = currentLake.parameterCd || '62614'; // fallback if missing;
         
-        const response = await fetch(
-            `${apiUrl}?format=json&sites=${currentLake.siteId}&parameterCd=${parameterCd}&startDT=${formatDate(startDate)}&endDT=${formatDate(endDate)}&siteStatus=all`
-        );
+        // Fetch both level and temperature data
+        const [levelResponse, tempResponse] = await Promise.all([
+            fetch(`${apiUrl}?format=json&sites=${currentLake.siteId}&parameterCd=${parameterCd}&startDT=${formatDate(startDate)}&endDT=${formatDate(endDate)}&siteStatus=all`),
+            fetch(`${apiUrl}?format=json&sites=03127989&parameterCd=00010&startDT=${formatDate(startDate)}&endDT=${formatDate(endDate)}&siteStatus=all`)
+        ]);
         
-        const data = await response.json();
+        const [levelData, tempData] = await Promise.all([
+            levelResponse.json(),
+            tempResponse.json()
+        ]);
         
-        if (data.value.timeSeries && data.value.timeSeries.length > 0) {
-            const timeSeries = data.value.timeSeries[0];
+        if (levelData.value.timeSeries && levelData.value.timeSeries.length > 0) {
+            const timeSeries = levelData.value.timeSeries[0];
             const values = timeSeries.values[0].value;
             
             const currentValue = values[values.length - 1];
@@ -528,7 +534,13 @@ async function fetchLakeData(days = 7) {
             document.getElementById('current-level-value').textContent = `${currentLevel.toFixed(2)} ft`;
             document.getElementById('last-updated').textContent = `Last updated: ${lastUpdated.toLocaleString()}`;
             
-            updateChart(values, days);
+            updateLevelChart(values, days);
+        }
+
+        if (tempData.value.timeSeries && tempData.value.timeSeries.length > 0) {
+            const timeSeries = tempData.value.timeSeries[0];
+            const values = timeSeries.values[0].value;
+            updateTempChart(values, days);
         }
     } catch (error) {
         console.error('Error fetching lake data:', error);
@@ -536,7 +548,7 @@ async function fetchLakeData(days = 7) {
     }
 }
 
-function updateChart(data, days) {
+function updateLevelChart(data, days) {
     const ctx = document.getElementById('levelChart').getContext('2d');
     
     const formatDate = (date, days) => {
@@ -584,7 +596,7 @@ function updateChart(data, days) {
             aspectRatio: isMobile ? 1 : 2,
             plugins: {
                 legend: {
-                    display: false // Hide legend on mobile
+                    display: false
                 },
                 tooltip: {
                     mode: 'index',
@@ -657,7 +669,135 @@ function updateChart(data, days) {
     });
 }
 
-// Time range selector
+function updateTempChart(data, days) {
+    const ctx = document.getElementById('tempChart').getContext('2d');
+    
+    const formatDate = (date, days) => {
+        if (days <= 7) {
+            if (window.innerWidth <= 768) {
+                return `${date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })} ${date.toLocaleTimeString('en-US', { hour: 'numeric' })}`;
+            }
+            return `${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+        } else if (days <= 30) {
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        } else {
+            return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+        }
+    };
+    
+    const labels = data.map(item => formatDate(new Date(item.dateTime), days));
+    // Convert Celsius to Fahrenheit: °F = (°C × 9/5) + 32
+    const values = data.map(item => (parseFloat(item.value) * 9/5) + 32);
+    
+    if (tempChart) {
+        tempChart.destroy();
+    }
+
+    const isMobile = window.innerWidth <= 768;
+    
+    tempChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Water Temperature (°F)',
+                data: values,
+                borderColor: '#e74c3c',
+                backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.1,
+                pointRadius: days <= 7 ? 0 : (isMobile ? 0 : 2)
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            aspectRatio: isMobile ? 1 : 2,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    padding: isMobile ? 12 : 6,
+                    titleFont: {
+                        size: isMobile ? 14 : 12
+                    },
+                    bodyFont: {
+                        size: isMobile ? 14 : 12
+                    },
+                    callbacks: {
+                        label: function(context) {
+                            return `Temperature: ${context.raw.toFixed(1)}°F`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: '°F',
+                        font: {
+                            size: isMobile ? 14 : 12
+                        },
+                        color: '#ffffff'
+                    },
+                    grid: {
+                        display: true,
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        font: {
+                            size: isMobile ? 14 : 12
+                        },
+                        padding: isMobile ? 8 : 4,
+                        color: '#ffffff',
+                        callback: function(value) {
+                            return value.toFixed(1) + '°F';
+                        }
+                    }
+                },
+                x: {
+                    title: {
+                        display: false
+                    },
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxRotation: isMobile ? 45 : 45,
+                        minRotation: isMobile ? 45 : 45,
+                        maxTicksLimit: isMobile ? 6 : (days <= 7 ? 10 : (days <= 30 ? 15 : 12)),
+                        font: {
+                            size: isMobile ? 12 : 11
+                        },
+                        padding: isMobile ? 8 : 4,
+                        color: '#ffffff'
+                    }
+                }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
+            },
+            layout: {
+                padding: {
+                    left: isMobile ? 10 : 0,
+                    right: isMobile ? 10 : 0,
+                    top: isMobile ? 20 : 0,
+                    bottom: isMobile ? 10 : 0
+                }
+            }
+        }
+    });
+}
+
+// Time range selectors
 document.getElementById('timeRange').addEventListener('change', (e) => {
     currentTimeRange = parseInt(e.target.value);
     if (currentLake) {
@@ -665,10 +805,17 @@ document.getElementById('timeRange').addEventListener('change', (e) => {
     }
 });
 
+document.getElementById('tempTimeRange').addEventListener('change', (e) => {
+    currentTempTimeRange = parseInt(e.target.value);
+    if (currentLake) {
+        fetchLakeData(currentTempTimeRange);
+    }
+});
+
 // Fetch data immediately and then every 15 minutes
 fetchLakeData(currentTimeRange);
-setInterval(() => fetchLakeData(currentTimeRange), 15 * 60 * 1000); 
-// Resize chart when window resizes
+
+// Resize charts when window resizes
 window.addEventListener('resize', () => {
     if (currentLake) {
         fetchLakeData(currentTimeRange);

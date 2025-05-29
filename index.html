@@ -67,27 +67,47 @@
                 </div>
             </div>
 
-            <div class="chart-container card">
-                <div class="chart-header">
-                    <div class="chart-title">
-                        <h2>Lake Level History</h2>
+            <div class="charts-section">
+                <div class="chart-container card">
+                    <div class="chart-header">
+                        <div class="chart-title">
+                            <h2>Lake Level History</h2>
+                        </div>
+                        <div class="chart-controls">
+                            <button id="favoriteButton" class="favorite-button">
+                                <i class="far fa-star"></i>
+                            </button>
+                            <select id="timeRange" class="time-range-selector">
+                                <option value="7">Last 7 Days</option>
+                                <option value="30">Last 30 Days</option>
+                                <option value="365">Last Year</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="chart-controls">
-                        <button id="favoriteButton" class="favorite-button">
-                            <i class="far fa-star"></i>
-                        </button>
-                        <select id="timeRange" class="time-range-selector">
-                            <option value="7">Last 7 Days</option>
-                            <option value="30">Last 30 Days</option>
-                            <option value="365">Last Year</option>
-                        </select>
+                    <div class="chart-wrapper">
+                        <canvas id="levelChart"></canvas>
                     </div>
                 </div>
-                <div class="chart-wrapper">
-                    <canvas id="levelChart"></canvas>
+
+                <div class="chart-container card">
+                    <div class="chart-header">
+                        <div class="chart-title">
+                            <h2>Water Temperature History</h2>
+                        </div>
+                        <div class="chart-controls">
+                            <select id="tempTimeRange" class="time-range-selector">
+                                <option value="7">Last 7 Days</option>
+                                <option value="30">Last 30 Days</option>
+                                <option value="365">Last Year</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="tempChart"></canvas>
+                    </div>
                 </div>
             </div>
-           
+
             <div class="card thresholds" id="thresholds-box" style="display: none;">
                 <h2>Tappan Lake Thresholds</h2>
                 <ul id="thresholds-list">
