@@ -319,8 +319,10 @@ let currentLake = null;
 let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 let levelChart = null;
 let tempChart = null;
+let outflowChart = null;
 let currentTimeRange = 7;
 let currentTempTimeRange = 7;
+let currentOutflowTimeRange = 7;
 
 // DOM Elements
 const launchScreen = document.getElementById('launchScreen');
@@ -464,7 +466,7 @@ function selectLake(lake) {
         weatherBox.style.display = 'none';
     }
 
-    fetchLakeData(currentTimeRange, currentTempTimeRange);
+    fetchLakeData(currentTimeRange, currentTempTimeRange, currentOutflowTimeRange);
 }
 
 // Back button
@@ -477,6 +479,9 @@ backButton.addEventListener('click', () => {
     }
     if (tempChart) {
         tempChart.destroy();
+    }
+    if (outflowChart) {
+        outflowChart.destroy();
     }
 });
 
@@ -497,15 +502,17 @@ document.addEventListener('DOMContentLoaded', function() {
 const IV_API_URL = 'https://waterservices.usgs.gov/nwis/iv/';
 const DV_API_URL = 'https://waterservices.usgs.gov/nwis/dv/';
 
-async function fetchLakeData(levelDays = 7, tempDays = 7) {
+async function fetchLakeData(levelDays = 7, tempDays = 7, outflowDays = 7) {
     if (!currentLake) return;
     
     try {
         const endDate = new Date();
         const levelStartDate = new Date();
         const tempStartDate = new Date();
+        const outflowStartDate = new Date();
         levelStartDate.setDate(levelStartDate.getDate() - levelDays);
         tempStartDate.setDate(tempStartDate.getDate() - tempDays);
+        outflowStartDate.setDate(outflowStartDate.getDate() - outflowDays);
         
         const formatDate = (date) => {
             return date.toISOString().split('T')[0];
@@ -513,17 +520,20 @@ async function fetchLakeData(levelDays = 7, tempDays = 7) {
 
         const levelApiUrl = levelDays >= 30 ? DV_API_URL : IV_API_URL;
         const tempApiUrl = tempDays >= 30 ? DV_API_URL : IV_API_URL;
+        const outflowApiUrl = outflowDays >= 30 ? DV_API_URL : IV_API_URL;
         const parameterCd = currentLake.parameterCd || '62614'; // fallback if missing;
         
-        // Fetch both level and temperature data with their respective time ranges
-        const [levelResponse, tempResponse] = await Promise.all([
+        // Fetch level, temperature, and outflow data with their respective time ranges
+        const [levelResponse, tempResponse, outflowResponse] = await Promise.all([
             fetch(`${levelApiUrl}?format=json&sites=${currentLake.siteId}&parameterCd=${parameterCd}&startDT=${formatDate(levelStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`),
-            fetch(`${tempApiUrl}?format=json&sites=03127989&parameterCd=00010&startDT=${formatDate(tempStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`)
+            fetch(`${tempApiUrl}?format=json&sites=03127989&parameterCd=00010&startDT=${formatDate(tempStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`),
+            fetch(`${outflowApiUrl}?format=json&sites=03128500&parameterCd=00060&startDT=${formatDate(outflowStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`)
         ]);
         
-        const [levelData, tempData] = await Promise.all([
+        const [levelData, tempData, outflowData] = await Promise.all([
             levelResponse.json(),
-            tempResponse.json()
+            tempResponse.json(),
+            outflowResponse.json()
         ]);
         
         if (levelData.value.timeSeries && levelData.value.timeSeries.length > 0) {
@@ -544,6 +554,12 @@ async function fetchLakeData(levelDays = 7, tempDays = 7) {
             const timeSeries = tempData.value.timeSeries[0];
             const values = timeSeries.values[0].value;
             updateTempChart(values, tempDays);
+        }
+
+        if (outflowData.value.timeSeries && outflowData.value.timeSeries.length > 0) {
+            const timeSeries = outflowData.value.timeSeries[0];
+            const values = timeSeries.values[0].value;
+            updateOutflowChart(values, outflowDays);
         }
     } catch (error) {
         console.error('Error fetching lake data:', error);
@@ -800,28 +816,162 @@ function updateTempChart(data, days) {
     });
 }
 
+function updateOutflowChart(data, days) {
+    const ctx = document.getElementById('outflowChart').getContext('2d');
+    
+    const formatDate = (date, days) => {
+        if (days <= 7) {
+            if (window.innerWidth <= 768) {
+                return `${date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })} ${date.toLocaleTimeString('en-US', { hour: 'numeric' })}`;
+            }
+            return `${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+        } else if (days <= 30) {
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        } else {
+            return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+        }
+    };
+    
+    const labels = data.map(item => formatDate(new Date(item.dateTime), days));
+    const values = data.map(item => parseFloat(item.value));
+    
+    if (outflowChart) {
+        outflowChart.destroy();
+    }
+
+    const isMobile = window.innerWidth <= 768;
+    
+    outflowChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Outflow (cfs)',
+                data: values,
+                borderColor: '#2ecc71',
+                backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.1,
+                pointRadius: days <= 7 ? 0 : (isMobile ? 0 : 2)
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            aspectRatio: isMobile ? 1 : 2,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    padding: isMobile ? 12 : 6,
+                    titleFont: {
+                        size: isMobile ? 14 : 12
+                    },
+                    bodyFont: {
+                        size: isMobile ? 14 : 12
+                    },
+                    callbacks: {
+                        label: function(context) {
+                            return `Outflow: ${context.raw.toFixed(1)} cfs`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'cfs',
+                        font: {
+                            size: isMobile ? 14 : 12
+                        },
+                        color: '#ffffff'
+                    },
+                    grid: {
+                        display: true,
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        font: {
+                            size: isMobile ? 14 : 12
+                        },
+                        padding: isMobile ? 8 : 4,
+                        color: '#ffffff',
+                        callback: function(value) {
+                            return value.toFixed(1) + ' cfs';
+                        }
+                    }
+                },
+                x: {
+                    title: {
+                        display: false
+                    },
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxRotation: isMobile ? 45 : 45,
+                        minRotation: isMobile ? 45 : 45,
+                        maxTicksLimit: isMobile ? 6 : (days <= 7 ? 10 : (days <= 30 ? 15 : 12)),
+                        font: {
+                            size: isMobile ? 12 : 11
+                        },
+                        padding: isMobile ? 8 : 4,
+                        color: '#ffffff'
+                    }
+                }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
+            },
+            layout: {
+                padding: {
+                    left: isMobile ? 10 : 0,
+                    right: isMobile ? 10 : 0,
+                    top: isMobile ? 20 : 0,
+                    bottom: isMobile ? 10 : 0
+                }
+            }
+        }
+    });
+}
+
 // Time range selectors
 document.getElementById('timeRange').addEventListener('change', (e) => {
     currentTimeRange = parseInt(e.target.value);
     if (currentLake) {
-        fetchLakeData(currentTimeRange, currentTempTimeRange);
+        fetchLakeData(currentTimeRange, currentTempTimeRange, currentOutflowTimeRange);
     }
 });
 
 document.getElementById('tempTimeRange').addEventListener('change', (e) => {
     currentTempTimeRange = parseInt(e.target.value);
     if (currentLake) {
-        fetchLakeData(currentTimeRange, currentTempTimeRange);
+        fetchLakeData(currentTimeRange, currentTempTimeRange, currentOutflowTimeRange);
+    }
+});
+
+document.getElementById('outflowTimeRange').addEventListener('change', (e) => {
+    currentOutflowTimeRange = parseInt(e.target.value);
+    if (currentLake) {
+        fetchLakeData(currentTimeRange, currentTempTimeRange, currentOutflowTimeRange);
     }
 });
 
 // Fetch data immediately and then every 15 minutes
-fetchLakeData(currentTimeRange, currentTempTimeRange);
+fetchLakeData(currentTimeRange, currentTempTimeRange, currentOutflowTimeRange);
 
 // Resize charts when window resizes
 window.addEventListener('resize', () => {
     if (currentLake) {
-        fetchLakeData(currentTimeRange, currentTempTimeRange);
+        fetchLakeData(currentTimeRange, currentTempTimeRange, currentOutflowTimeRange);
     }
 });
 

@@ -92,6 +92,24 @@
                 <div class="chart-container card">
                     <div class="chart-header">
                         <div class="chart-title">
+                            <h2>Lake Outflow History</h2>
+                        </div>
+                        <div class="chart-controls">
+                            <select id="outflowTimeRange" class="time-range-selector">
+                                <option value="7">Last 7 Days</option>
+                                <option value="30">Last 30 Days</option>
+                                <option value="365">Last Year</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="outflowChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container card">
+                    <div class="chart-header">
+                        <div class="chart-title">
                             <h2>Water Temperature History</h2>
                         </div>
                         <div class="chart-controls">
