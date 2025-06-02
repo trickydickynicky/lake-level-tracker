@@ -629,58 +629,15 @@ footer a:hover {
     padding: 8px 12px !important;
 }
 
-.weather-card {
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    color: #fff;
-}
-
-.weather-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.weather-icon-temp {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.weather-icon-temp img {
-    width: 50px;
-    height: 50px;
-    filter: brightness(1.2);
-}
-
-.weather-icon-temp span {
-    font-size: 2em;
-    font-weight: bold;
-}
-
-.weather-details {
-    text-align: center;
-}
-
-.weather-details p {
-    margin: 5px 0;
-    color: rgba(255, 255, 255, 0.9);
-}
-
-#weather-temp {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
+/* Remove all weather-related styles */
+.weather-card,
+.weather-content,
+.weather-icon-temp,
+.weather-icon-temp img,
+.weather-icon-temp span,
+.weather-details,
+.weather-details p,
+#weather-temp,
 #weather-description {
-    font-size: 1.2rem;
-    text-transform: capitalize;
+    display: none;
 }
