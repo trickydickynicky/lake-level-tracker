@@ -502,10 +502,35 @@ favoriteButton.addEventListener('click', () => {
     }
 });
 
+// Initialize function
+async function initialize() {
+    // Set Tappan Lake as the initial lake
+    currentLake = lakes[0]; // Tappan Lake is the first lake in the array
+    launchScreen.style.display = 'none';
+    mainContent.style.display = 'block';
+    lakeName.textContent = `${currentLake.name} Level Tracker`;
+    siteId.textContent = currentLake.siteId;
+    updateFavoriteButton();
+
+    // Show thresholds and charts for Tappan Lake
+    const thresholdsBox = document.getElementById('thresholds-box');
+    const tempChartContainer = document.getElementById('tempChartContainer');
+    const outflowChartContainer = document.getElementById('outflowChartContainer');
+    
+    thresholdsBox.style.display = 'block';
+    tempChartContainer.style.display = 'block';
+    outflowChartContainer.style.display = 'block';
+
+    // Initial data fetch
+    await fetchLakeData(currentTimeRange, currentTempTimeRange, currentOutflowTimeRange);
+}
+
 // Initialize when DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize favorites list
     updateFavoritesList();
+    // Initialize the app with Tappan Lake
+    initialize();
 });
 
 // Existing lake data fetching and chart code
@@ -991,9 +1016,3 @@ window.addEventListener('resize', () => {
         fetchLakeData(currentTimeRange, currentTempTimeRange, currentOutflowTimeRange);
     }
 });
-
-// Initialize function
-async function initialize() {
-    // Initial data fetch
-    fetchLakeData(currentTimeRange, currentTempTimeRange, currentOutflowTimeRange);
-}
