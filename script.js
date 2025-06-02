@@ -504,32 +504,19 @@ favoriteButton.addEventListener('click', () => {
 
 // Initialize function
 async function initialize() {
-    // Set Tappan Lake as the initial lake
-    currentLake = lakes[0]; // Tappan Lake is the first lake in the array
-    launchScreen.style.display = 'none';
-    mainContent.style.display = 'block';
-    lakeName.textContent = `${currentLake.name} Level Tracker`;
-    siteId.textContent = currentLake.siteId;
-    updateFavoriteButton();
-
-    // Show thresholds and charts for Tappan Lake
-    const thresholdsBox = document.getElementById('thresholds-box');
-    const tempChartContainer = document.getElementById('tempChartContainer');
-    const outflowChartContainer = document.getElementById('outflowChartContainer');
+    // Initialize favorites list
+    updateFavoritesList();
     
-    thresholdsBox.style.display = 'block';
-    tempChartContainer.style.display = 'block';
-    outflowChartContainer.style.display = 'block';
-
-    // Initial data fetch
-    await fetchLakeData(currentTimeRange, currentTempTimeRange, currentOutflowTimeRange);
+    // Ensure launch screen is visible and main content is hidden
+    launchScreen.style.display = 'flex';
+    mainContent.style.display = 'none';
+    
+    // Reset current lake
+    currentLake = null;
 }
 
 // Initialize when DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize favorites list
-    updateFavoritesList();
-    // Initialize the app with Tappan Lake
     initialize();
 });
 
