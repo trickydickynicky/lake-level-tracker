@@ -320,6 +320,7 @@ let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 let levelChart = null;
 let tempChart = null;
 let outflowChart = null;
+let airTempChart = null;
 let currentTimeRange = 7;
 let currentTempTimeRange = 7;
 let currentOutflowTimeRange = 7;
@@ -456,15 +457,18 @@ function selectLake(lake) {
     const thresholdsBox = document.getElementById('thresholds-box');
     const tempChartContainer = document.getElementById('tempChartContainer');
     const outflowChartContainer = document.getElementById('outflowChartContainer');
+    const airTempChartContainer = document.getElementById('airTempChartContainer');
     
     if (lake.siteId === '03128000') { // Tappan Lake siteId
         thresholdsBox.style.display = 'block';
         tempChartContainer.style.display = 'block';
         outflowChartContainer.style.display = 'block';
+        airTempChartContainer.style.display = 'block';
     } else {
         thresholdsBox.style.display = 'none';
         tempChartContainer.style.display = 'none';
         outflowChartContainer.style.display = 'none';
+        airTempChartContainer.style.display = 'none';
         // Destroy charts if they exist
         if (tempChart) {
             tempChart.destroy();
@@ -473,6 +477,10 @@ function selectLake(lake) {
         if (outflowChart) {
             outflowChart.destroy();
             outflowChart = null;
+        }
+        if (airTempChart) {
+            airTempChart.destroy();
+            airTempChart = null;
         }
     }
 
@@ -492,6 +500,9 @@ backButton.addEventListener('click', () => {
     }
     if (outflowChart) {
         outflowChart.destroy();
+    }
+    if (airTempChart) {
+        airTempChart.destroy();
     }
 });
 
@@ -532,9 +543,11 @@ async function fetchLakeData(levelDays = 7, tempDays = 7, outflowDays = 7) {
         const levelStartDate = new Date();
         const tempStartDate = new Date();
         const outflowStartDate = new Date();
+        const airTempStartDate = new Date();
         levelStartDate.setDate(levelStartDate.getDate() - levelDays);
         tempStartDate.setDate(tempStartDate.getDate() - tempDays);
         outflowStartDate.setDate(outflowStartDate.getDate() - outflowDays);
+        airTempStartDate.setDate(airTempStartDate.getDate() - 7); // Always 7 days for air temp
         
         const formatDate = (date) => {
             return date.toISOString().split('T')[0];
@@ -550,11 +563,12 @@ async function fetchLakeData(levelDays = 7, tempDays = 7, outflowDays = 7) {
             fetch(`${levelApiUrl}?format=json&sites=${currentLake.siteId}&parameterCd=${parameterCd}&startDT=${formatDate(levelStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`)
         ];
 
-        // Only add temperature and outflow requests for Tappan Lake
+        // Only add temperature, outflow, and air temperature requests for Tappan Lake
         if (currentLake.siteId === '03128000') {
             requests.push(
                 fetch(`${outflowApiUrl}?format=json&sites=03128500&parameterCd=00060&startDT=${formatDate(outflowStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`),
-                fetch(`${tempApiUrl}?format=json&sites=03127989&parameterCd=00010&startDT=${formatDate(tempStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`)
+                fetch(`${tempApiUrl}?format=json&sites=03127989&parameterCd=00010&startDT=${formatDate(tempStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`),
+                fetch(`${tempApiUrl}?format=json&sites=402120081134200&parameterCd=00020&startDT=${formatDate(airTempStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`)
             );
         }
         
@@ -576,7 +590,7 @@ async function fetchLakeData(levelDays = 7, tempDays = 7, outflowDays = 7) {
             updateLevelChart(values, levelDays);
         }
 
-        // Only update outflow and temperature charts for Tappan Lake
+        // Only update outflow, temperature, and air temperature charts for Tappan Lake
         if (currentLake.siteId === '03128000') {
             if (data[1].value.timeSeries && data[1].value.timeSeries.length > 0) {
                 const timeSeries = data[1].value.timeSeries[0];
@@ -588,6 +602,16 @@ async function fetchLakeData(levelDays = 7, tempDays = 7, outflowDays = 7) {
                 const timeSeries = data[2].value.timeSeries[0];
                 const values = timeSeries.values[0].value;
                 updateTempChart(values, tempDays);
+            }
+
+            if (data[3].value.timeSeries && data[3].value.timeSeries.length > 0) {
+                const timeSeries = data[3].value.timeSeries[0];
+                const values = timeSeries.values[0].value;
+                // Update current air temperature display
+                const currentValue = values[values.length - 1];
+                const currentTemp = (parseFloat(currentValue.value) * 9/5) + 32;
+                document.getElementById('current-air-temp').textContent = `${currentTemp.toFixed(1)}°F`;
+                updateAirTempChart(values);
             }
         }
     } catch (error) {
@@ -947,6 +971,128 @@ function updateOutflowChart(data, days) {
                         maxRotation: isMobile ? 45 : 45,
                         minRotation: isMobile ? 45 : 45,
                         maxTicksLimit: isMobile ? 6 : (days <= 7 ? 10 : (days <= 30 ? 15 : 12)),
+                        font: {
+                            size: isMobile ? 12 : 11
+                        },
+                        padding: isMobile ? 8 : 4,
+                        color: '#ffffff'
+                    }
+                }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
+            },
+            layout: {
+                padding: {
+                    left: isMobile ? 10 : 0,
+                    right: isMobile ? 10 : 0,
+                    top: isMobile ? 20 : 0,
+                    bottom: isMobile ? 10 : 0
+                }
+            }
+        }
+    });
+}
+
+function updateAirTempChart(data) {
+    const ctx = document.getElementById('airTempChart').getContext('2d');
+    
+    const formatDate = (date) => {
+        if (window.innerWidth <= 768) {
+            return `${date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })} ${date.toLocaleTimeString('en-US', { hour: 'numeric' })}`;
+        }
+        return `${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+    };
+    
+    const labels = data.map(item => formatDate(new Date(item.dateTime)));
+    // Convert Celsius to Fahrenheit: °F = (°C × 9/5) + 32
+    const values = data.map(item => (parseFloat(item.value) * 9/5) + 32);
+    
+    if (airTempChart) {
+        airTempChart.destroy();
+    }
+
+    const isMobile = window.innerWidth <= 768;
+    
+    airTempChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Air Temperature (°F)',
+                data: values,
+                borderColor: '#f39c12',
+                backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.1,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            aspectRatio: isMobile ? 1 : 2,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    padding: isMobile ? 12 : 6,
+                    titleFont: {
+                        size: isMobile ? 14 : 12
+                    },
+                    bodyFont: {
+                        size: isMobile ? 14 : 12
+                    },
+                    callbacks: {
+                        label: function(context) {
+                            return `Temperature: ${context.raw.toFixed(1)}°F`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: '°F',
+                        font: {
+                            size: isMobile ? 14 : 12
+                        },
+                        color: '#ffffff'
+                    },
+                    grid: {
+                        display: true,
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        font: {
+                            size: isMobile ? 14 : 12
+                        },
+                        padding: isMobile ? 8 : 4,
+                        color: '#ffffff',
+                        callback: function(value) {
+                            return value.toFixed(1) + '°F';
+                        }
+                    }
+                },
+                x: {
+                    title: {
+                        display: false
+                    },
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxRotation: isMobile ? 45 : 45,
+                        minRotation: isMobile ? 45 : 45,
+                        maxTicksLimit: isMobile ? 6 : 10,
                         font: {
                             size: isMobile ? 12 : 11
                         },

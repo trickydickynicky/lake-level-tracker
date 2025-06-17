@@ -557,6 +557,12 @@ footer a:hover {
         width: 56px;
         height: 56px;
     }
+
+    .current-value {
+        font-size: 1rem;
+        padding: 0.4rem 0.8rem;
+        min-width: 80px;
+    }
 }
 
 /* Desktop Layout */
@@ -617,8 +623,8 @@ footer a:hover {
 }
 
 /* Chart.js canvas background */
-#levelChart, #tempChart {
-    background: rgba(0, 0, 0, 0.3);
+#levelChart, #tempChart, #outflowChart {
+    background: transparent;
     border-radius: 10px;
     padding: 1rem;
 }
@@ -640,4 +646,15 @@ footer a:hover {
 #weather-temp,
 #weather-description {
     display: none;
+}
+
+.current-value {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    min-width: 100px;
+    text-align: center;
 }
