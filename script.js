@@ -1063,7 +1063,8 @@ function updateAirTempChart(data) {
                         display: true,
                         text: '°F',
                         font: {
-                            size: isMobile ? 14 : 12
+                            size: isMobile ? 14 : 12,
+                            weight: 'normal'
                         },
                         color: '#ffffff'
                     },
@@ -1073,7 +1074,8 @@ function updateAirTempChart(data) {
                     },
                     ticks: {
                         font: {
-                            size: isMobile ? 14 : 12
+                            size: isMobile ? 14 : 12,
+                            weight: 'normal'
                         },
                         padding: isMobile ? 8 : 4,
                         color: '#ffffff',
@@ -1094,7 +1096,8 @@ function updateAirTempChart(data) {
                         minRotation: isMobile ? 45 : 45,
                         maxTicksLimit: isMobile ? 6 : 10,
                         font: {
-                            size: isMobile ? 12 : 11
+                            size: isMobile ? 12 : 11,
+                            weight: 'normal'
                         },
                         padding: isMobile ? 8 : 4,
                         color: '#ffffff'
