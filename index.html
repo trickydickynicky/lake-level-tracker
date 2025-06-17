@@ -41,7 +41,12 @@
                 <button id="backButton" class="back-button">
                     <i class="fas fa-arrow-left"></i> Back to Search
                 </button>
-                <h1 id="lakeName">Tappan Lake Level Tracker</h1>
+                <div class="lake-title-container">
+                    <h1 id="lakeName">Tappan Lake Level Tracker</h1>
+                    <button id="favoriteButton" class="favorite-button">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
                 <p class="site-id">USGS Site ID: <span id="siteId">03128000</span></p>
             </div>
         </header>
@@ -60,9 +65,6 @@
                             <h2>Lake Level History</h2>
                         </div>
                         <div class="chart-controls">
-                            <button id="favoriteButton" class="favorite-button">
-                                <i class="far fa-star"></i>
-                            </button>
                             <select id="timeRange" class="time-range-selector">
                                 <option value="7">Last 7 Days</option>
                                 <option value="30">Last 30 Days</option>
