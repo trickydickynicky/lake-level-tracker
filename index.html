@@ -53,8 +53,21 @@
         
         <main>
             <div class="card current-level">
-                <h2>Current Level</h2>
-                <div id="current-level-value">Loading...</div>
+                <h2>Current Readings</h2>
+                <div class="current-readings">
+                    <div class="reading">
+                        <div class="reading-label">Lake Level</div>
+                        <div id="current-level-value">Loading...</div>
+                    </div>
+                    <div class="reading">
+                        <div class="reading-label">Air Temperature</div>
+                        <div id="current-air-temp-value">Loading...</div>
+                    </div>
+                    <div class="reading">
+                        <div class="reading-label">Water Temperature</div>
+                        <div id="current-water-temp-value">Loading...</div>
+                    </div>
+                </div>
                 <div id="last-updated">Last updated: --</div>
             </div>
 
@@ -119,7 +132,9 @@
                             <h2>Air Temperature History</h2>
                         </div>
                         <div class="chart-controls">
-                            <div id="current-air-temp" class="current-value">Loading...</div>
+                            <select id="airTempTimeRange" class="time-range-selector" disabled>
+                                <option value="7" selected>Last 7 Days</option>
+                            </select>
                         </div>
                     </div>
                     <div class="chart-wrapper">

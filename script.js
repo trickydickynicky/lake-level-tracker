@@ -601,18 +601,26 @@ async function fetchLakeData(levelDays = 7, tempDays = 7, outflowDays = 7) {
             if (data[2].value.timeSeries && data[2].value.timeSeries.length > 0) {
                 const timeSeries = data[2].value.timeSeries[0];
                 const values = timeSeries.values[0].value;
+                // Update current water temperature
+                const currentValue = values[values.length - 1];
+                const currentTemp = (parseFloat(currentValue.value) * 9/5) + 32;
+                document.getElementById('current-water-temp-value').textContent = `${currentTemp.toFixed(1)}°F`;
                 updateTempChart(values, tempDays);
             }
 
             if (data[3].value.timeSeries && data[3].value.timeSeries.length > 0) {
                 const timeSeries = data[3].value.timeSeries[0];
                 const values = timeSeries.values[0].value;
-                // Update current air temperature display
+                // Update current air temperature
                 const currentValue = values[values.length - 1];
                 const currentTemp = (parseFloat(currentValue.value) * 9/5) + 32;
-                document.getElementById('current-air-temp').textContent = `${currentTemp.toFixed(1)}°F`;
+                document.getElementById('current-air-temp-value').textContent = `${currentTemp.toFixed(1)}°F`;
                 updateAirTempChart(values);
             }
+        } else {
+            // Clear temperature readings for non-Tappan lakes
+            document.getElementById('current-air-temp-value').textContent = 'N/A';
+            document.getElementById('current-water-temp-value').textContent = 'N/A';
         }
     } catch (error) {
         console.error('Error fetching lake data:', error);
