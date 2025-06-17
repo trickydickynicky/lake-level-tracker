@@ -568,7 +568,7 @@ async function fetchLakeData(levelDays = 7, tempDays = 7, outflowDays = 7) {
             requests.push(
                 fetch(`${outflowApiUrl}?format=json&sites=03128500&parameterCd=00060&startDT=${formatDate(outflowStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`),
                 fetch(`${tempApiUrl}?format=json&sites=03127989&parameterCd=00010&startDT=${formatDate(tempStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`),
-                fetch(`${tempApiUrl}?format=json&sites=402120081134200&parameterCd=00020&startDT=${formatDate(airTempStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`)
+                fetch(`${IV_API_URL}?format=json&sites=402120081134200&parameterCd=00020&startDT=${formatDate(airTempStartDate)}&endDT=${formatDate(endDate)}&siteStatus=all`)
             );
         }
         
@@ -588,6 +588,8 @@ async function fetchLakeData(levelDays = 7, tempDays = 7, outflowDays = 7) {
             document.getElementById('last-updated').textContent = `Last updated: ${lastUpdated.toLocaleString()}`;
             
             updateLevelChart(values, levelDays);
+        } else {
+            document.getElementById('current-level-value').textContent = 'No data available';
         }
 
         // Only update outflow, temperature, and air temperature charts for Tappan Lake
@@ -606,6 +608,8 @@ async function fetchLakeData(levelDays = 7, tempDays = 7, outflowDays = 7) {
                 const currentTemp = (parseFloat(currentValue.value) * 9/5) + 32;
                 document.getElementById('current-water-temp-value').textContent = `${currentTemp.toFixed(1)}°F`;
                 updateTempChart(values, tempDays);
+            } else {
+                document.getElementById('current-water-temp-value').textContent = 'No data available';
             }
 
             if (data[3].value.timeSeries && data[3].value.timeSeries.length > 0) {
@@ -616,6 +620,8 @@ async function fetchLakeData(levelDays = 7, tempDays = 7, outflowDays = 7) {
                 const currentTemp = (parseFloat(currentValue.value) * 9/5) + 32;
                 document.getElementById('current-air-temp-value').textContent = `${currentTemp.toFixed(1)}°F`;
                 updateAirTempChart(values);
+            } else {
+                document.getElementById('current-air-temp-value').textContent = 'No data available';
             }
         } else {
             // Clear temperature readings for non-Tappan lakes
@@ -625,6 +631,8 @@ async function fetchLakeData(levelDays = 7, tempDays = 7, outflowDays = 7) {
     } catch (error) {
         console.error('Error fetching lake data:', error);
         document.getElementById('current-level-value').textContent = 'Error loading data';
+        document.getElementById('current-air-temp-value').textContent = 'Error loading data';
+        document.getElementById('current-water-temp-value').textContent = 'Error loading data';
     }
 }
 
