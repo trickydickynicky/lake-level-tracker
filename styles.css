@@ -195,6 +195,7 @@ body {
     align-items: center;
     gap: 1rem;
     text-align: center;
+    width: 100%;
 }
 
 .header-controls {
@@ -202,6 +203,8 @@ body {
     align-items: center;
     gap: 1rem;
     align-self: flex-start;
+    margin-left: 0;
+    width: 100%;
 }
 
 .back-button {
@@ -216,6 +219,7 @@ body {
     border-radius: 20px;
     background: rgba(0, 0, 0, 0.4);
     transition: background-color 0.3s ease;
+    margin-right: 0.5rem;
 }
 
 .back-button:hover {
@@ -649,6 +653,7 @@ footer a:hover {
 
     .header-controls {
         gap: 0.5rem;
+        padding: 0 1rem;
     }
 }
 
