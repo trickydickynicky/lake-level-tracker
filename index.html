@@ -15,20 +15,43 @@
     <!-- Launch Screen -->
     <div id="launchScreen" class="launch-screen">
         <div class="launch-content">
-            <h1>Lake Level Tracker</h1>
+            <div class="app-header">
+                <div class="header-title-row">
+                    <i class="fas fa-water header-icon"></i>
+                    <h1>LAKES</h1>
+                </div>
+                <div class="header-subtitle-row">
+                    <p class="subtitle">LIVE USGS DATA</p>
+                    <button class="refresh-button">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
             <div class="search-container">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="lakeSearch" placeholder="Search for a lake...">
+                    <input type="text" id="lakeSearch" placeholder="Search...">
                 </div>
                 <div class="search-results" id="searchResults">
                     <!-- Results will be populated here -->
                 </div>
             </div>
             <div class="favorites-section">
-                <h2>Favorite Lakes</h2>
+                <div class="section-header">
+                    <div class="section-dot red"></div>
+                    <h2>FAVORITES</h2>
+                </div>
                 <div class="favorites-list" id="favoritesList">
                     <!-- Favorites will be populated here -->
+                </div>
+            </div>
+            <div class="all-lakes-section">
+                <div class="section-header">
+                    <div class="section-dot black"></div>
+                    <h2>ALL LAKES</h2>
+                </div>
+                <div class="all-lakes-list" id="allLakesList">
+                    <!-- All lakes will be populated here -->
                 </div>
             </div>
         </div>
@@ -36,113 +59,81 @@
 
     <!-- Main Content (Hidden by default) -->
     <div id="mainContent" class="container" style="display: none;">
-        <header>
-            <div class="header-content">
-                <div class="header-controls">
-                    <button id="backButton" class="back-button">
-                        <i class="fas fa-arrow-left"></i> Back to Search
-                    </button>
-                    <button id="favoriteButton" class="favorite-button">
-                        <i class="far fa-star"></i>
-                    </button>
-                </div>
-                <div class="lake-title-container">
-                    <h1 id="lakeName">Tappan Lake Level Tracker</h1>
-                </div>
-                <p class="site-id">USGS Site ID: <span id="siteId">03128000</span></p>
+        <header class="detail-header">
+            <div class="detail-header-top">
+                <button id="backButton" class="back-button-detail">
+                    <i class="fas fa-arrow-left"></i> BACK
+                </button>
+                <button id="favoriteButton" class="favorite-button-detail">
+                    <i class="far fa-heart"></i>
+                    <i class="fas fa-heart"></i>
+                </button>
+            </div>
+            <div class="detail-title-section">
+                <h1 id="lakeName">Tappan Lake</h1>
+                <p id="lakeLocation" class="lake-location-detail">Tappan, OH</p>
             </div>
         </header>
         
-        <main>
-            <div class="card current-level">
-                <h2>Current Readings</h2>
-                <div class="current-readings">
-                    <div class="reading">
-                        <div class="reading-label">Lake Level</div>
-                        <div id="current-level-value">Loading...</div>
-                    </div>
-                    <div class="reading">
-                        <div class="reading-label">Air Temperature</div>
-                        <div id="current-air-temp-value">Loading...</div>
-                    </div>
-                    <div class="reading">
-                        <div class="reading-label">Water Temperature</div>
-                        <div id="current-water-temp-value">Loading...</div>
-                    </div>
-                </div>
-                <div id="last-updated">Last updated: --</div>
+        <main class="detail-main">
+            <!-- Navigation Tabs -->
+            <div class="metric-tabs">
+                <button class="metric-tab active" data-metric="waterLevel" id="tabLevel">
+                    <i class="fas fa-tint"></i>
+                    <span>LEVEL</span>
+                </button>
+                <button class="metric-tab" data-metric="outflow" id="tabOutflow">
+                    <i class="fas fa-chart-line"></i>
+                    <span>OUTFLOW</span>
+                </button>
+                <button class="metric-tab" data-metric="waterTemp" id="tabWater">
+                    <i class="fas fa-thermometer-half"></i>
+                    <span>WATER</span>
+                </button>
+                <button class="metric-tab" data-metric="airTemp" id="tabAir">
+                    <i class="fas fa-wind"></i>
+                    <span>AIR</span>
+                </button>
             </div>
 
-            <div class="charts-section">
-                <div class="chart-container card">
-                    <div class="chart-header">
-                        <div class="chart-title">
-                            <h2>Lake Level History</h2>
-                        </div>
-                        <div class="chart-controls">
-                            <select id="timeRange" class="time-range-selector">
-                                <option value="7">Last 7 Days</option>
-                                <option value="30">Last 30 Days</option>
-                                <option value="365">Last Year</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="chart-wrapper">
-                        <canvas id="levelChart"></canvas>
+            <!-- Current Data Display -->
+            <div class="current-data-card">
+                <div class="current-data-header">
+                    <span class="current-data-label" id="currentDataLabel">WATER LEVEL</span>
+                    <div class="live-indicator">
+                        <i class="fas fa-circle"></i>
+                        <span>LIVE</span>
                     </div>
                 </div>
+                <div class="current-data-value" id="currentDataValue">
+                    <span id="currentValueNumber">--</span>
+                    <span class="current-data-unit" id="currentDataUnit">ft</span>
+                </div>
+            </div>
 
-                <div class="chart-container card" id="outflowChartContainer" style="display: none;">
-                    <div class="chart-header">
-                        <div class="chart-title">
-                            <h2>Lake Outflow History</h2>
-                        </div>
-                        <div class="chart-controls">
-                            <select id="outflowTimeRange" class="time-range-selector">
-                                <option value="7">Last 7 Days</option>
-                                <option value="30">Last 30 Days</option>
-                                <option value="365">Last Year</option>
-                            </select>
-                        </div>
+            <!-- Chart Section -->
+            <div class="chart-card">
+                <div class="chart-label-container">
+                    <div class="chart-label-clickable" id="chartLabel">
+                        <span id="chartLabelText">7 DAY HISTORY</span>
+                        <i class="fas fa-chevron-down"></i>
                     </div>
-                    <div class="chart-wrapper">
-                        <canvas id="outflowChart"></canvas>
+                    <div class="chart-label-dropdown" id="chartLabelDropdown">
+                        <div class="dropdown-option" data-days="7">7 DAY HISTORY</div>
+                        <div class="dropdown-option" data-days="30">30 DAY HISTORY</div>
+                        <div class="dropdown-option" data-days="365">1 YEAR HISTORY</div>
                     </div>
                 </div>
+                <div class="chart-wrapper-detail">
+                    <canvas id="detailChart"></canvas>
+                </div>
+            </div>
 
-                <div class="chart-container card" id="tempChartContainer" style="display: none;">
-                    <div class="chart-header">
-                        <div class="chart-title">
-                            <h2>Water Temperature History</h2>
-                        </div>
-                        <div class="chart-controls">
-                            <select id="tempTimeRange" class="time-range-selector">
-                                <option value="7">Last 7 Days</option>
-                                <option value="30">Last 30 Days</option>
-                                <option value="365">Last Year</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="chart-wrapper">
-                        <canvas id="tempChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="chart-container card" id="airTempChartContainer" style="display: none;">
-                    <div class="chart-header">
-                        <div class="chart-title">
-                            <h2>Air Temperature History</h2>
-                        </div>
-                        <div class="chart-controls">
-                            <select id="airTempTimeRange" class="time-range-selector" disabled>
-                                <option value="7" selected>Last 7 Days</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="chart-wrapper">
-                        <canvas id="airTempChart"></canvas>
-                    </div>
-                </div>
+            <!-- Data Source -->
+            <div class="data-source-card">
+                <div class="data-source-label">DATA SOURCE</div>
+                <div class="data-source-text">USGS Water Services API</div>
+                <div class="data-source-station">Station: <span id="detailSiteId">03128000</span></div>
             </div>
 
             <div class="card thresholds" id="thresholds-box" style="display: none;">

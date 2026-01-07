@@ -352,6 +352,85 @@ lakeSearch.addEventListener('input', (e) => {
     displaySearchResults(results);
 });
 
+function createLakeCard(lake, lakeData = null) {
+    const isFavorite = favorites.some(fav => fav.siteId === lake.siteId);
+    const div = document.createElement('div');
+    div.className = 'lake-card';
+    
+    const level = lakeData?.level || { value: '--', unit: 'ft' };
+    const outflow = lakeData?.outflow || { value: '--', unit: 'cfs' };
+    const waterTemp = lakeData?.waterTemp || { value: '--', unit: '°F' };
+    const airTemp = lakeData?.airTemp || { value: '--', unit: '°F' };
+    
+    div.innerHTML = `
+        <div class="lake-card-header">
+            <div>
+                <div class="lake-name">${lake.name}</div>
+                <div class="lake-location">${lake.location}</div>
+            </div>
+            <button class="lake-card-heart ${isFavorite ? 'favorited' : ''}" data-site-id="${lake.siteId}">
+                <i class="far fa-heart"></i>
+                <i class="fas fa-heart"></i>
+            </button>
+        </div>
+        <div class="lake-data-grid">
+            <div class="lake-data-item">
+                <div class="lake-data-label">
+                    <i class="fas fa-tint lake-data-icon level"></i>
+                    <span class="lake-data-label-text">LEVEL</span>
+                </div>
+                <div class="lake-data-value">
+                    ${level.value}
+                    <span class="lake-data-unit">${level.unit}</span>
+                </div>
+            </div>
+            <div class="lake-data-item">
+                <div class="lake-data-label">
+                    <i class="fas fa-chart-line lake-data-icon outflow"></i>
+                    <span class="lake-data-label-text">OUTFLOW</span>
+                </div>
+                <div class="lake-data-value">
+                    ${outflow.value}
+                    <span class="lake-data-unit">${outflow.unit}</span>
+                </div>
+            </div>
+            <div class="lake-data-item">
+                <div class="lake-data-label">
+                    <i class="fas fa-thermometer-half lake-data-icon water"></i>
+                    <span class="lake-data-label-text">WATER</span>
+                </div>
+                <div class="lake-data-value">
+                    ${waterTemp.value}
+                    <span class="lake-data-unit">${waterTemp.unit}</span>
+                </div>
+            </div>
+            <div class="lake-data-item">
+                <div class="lake-data-label">
+                    <i class="fas fa-thermometer-half lake-data-icon air"></i>
+                    <span class="lake-data-label-text">AIR</span>
+                </div>
+                <div class="lake-data-value">
+                    ${airTemp.value}
+                    <span class="lake-data-unit">${airTemp.unit}</span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    div.addEventListener('click', () => selectLake(lake));
+    
+    const heartButton = div.querySelector('.lake-card-heart');
+    heartButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleFavorite(lake);
+        // Update the heart icon
+        const isNowFavorite = favorites.some(fav => fav.siteId === lake.siteId);
+        heartButton.classList.toggle('favorited', isNowFavorite);
+    });
+    
+    return div;
+}
+
 function displaySearchResults(results) {
     searchResults.innerHTML = '';
     if (results.length === 0) {
@@ -361,27 +440,8 @@ function displaySearchResults(results) {
 
     searchResults.style.display = 'block';
     results.forEach(lake => {
-        const isFavorite = favorites.some(fav => fav.siteId === lake.siteId);
-        const div = document.createElement('div');
-        div.className = 'search-result-item';
-        div.innerHTML = `
-            <div>
-                <div class="lake-name">${lake.name}</div>
-                <div class="lake-location">${lake.location}</div>
-            </div>
-            <i class="fas ${isFavorite ? 'fa-star' : 'fa-star'} favorite-icon ${isFavorite ? 'favorited' : ''}" 
-               data-site-id="${lake.siteId}"></i>
-        `;
-        div.addEventListener('click', () => selectLake(lake));
-
-        // Add event listener to the star icon to toggle favorite
-        const favoriteIcon = div.querySelector('.favorite-icon');
-        favoriteIcon.addEventListener('click', (e) => {
-            e.stopPropagation();  // Prevent selecting the lake
-            toggleFavorite(lake);  // Toggle favorite status when clicked
-        });
-
-        searchResults.appendChild(div);
+        const card = createLakeCard(lake);
+        searchResults.appendChild(card);
     });
 }
 
@@ -399,32 +459,103 @@ function toggleFavorite(lake) {
     updateFavoriteButton();
 }
 
-function updateFavoritesList() {
-    favoritesList.innerHTML = '';
-    favorites.forEach(lake => {
-        const div = document.createElement('div');
-        div.className = 'favorite-item';
-        div.innerHTML = `
-            <div>
-                <div class="lake-name">${lake.name}</div>
-                <div class="lake-location">${lake.location}</div>
-            </div>
-            <div class="favorite-controls">
-                <i class="fas fa-times remove-favorite" data-site-id="${lake.siteId}"></i>
-            </div>
-        `;
+async function fetchLakeCurrentData(lake) {
+    try {
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - 1);
         
-        // Event listener for removing favorite
-        const removeButton = div.querySelector('.remove-favorite');
-        removeButton.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent the lake selection event from triggering
-            const siteId = e.target.getAttribute('data-site-id');
-            removeFavorite(siteId);
-        });
+        const formatDate = (date) => date.toISOString().split('T')[0];
+        const apiUrl = 'https://waterservices.usgs.gov/nwis/iv/';
+        
+        const requests = [
+            fetch(`${apiUrl}?format=json&sites=${lake.siteId}&parameterCd=${lake.parameterCd || '62614'}&startDT=${formatDate(startDate)}&endDT=${formatDate(endDate)}&siteStatus=all`)
+        ];
+        
+        // For Tappan Lake, also fetch outflow, water temp, and air temp
+        if (lake.siteId === '03128000') {
+            requests.push(
+                fetch(`${apiUrl}?format=json&sites=03128500&parameterCd=00060&startDT=${formatDate(startDate)}&endDT=${formatDate(endDate)}&siteStatus=all`),
+                fetch(`${apiUrl}?format=json&sites=03127989&parameterCd=00010&startDT=${formatDate(startDate)}&endDT=${formatDate(endDate)}&siteStatus=all`),
+                fetch(`${apiUrl}?format=json&sites=402120081134200&parameterCd=00020&startDT=${formatDate(startDate)}&endDT=${formatDate(endDate)}&siteStatus=all`)
+            );
+        }
+        
+        const responses = await Promise.all(requests);
+        const data = await Promise.all(responses.map(r => r.json()));
+        
+        const result = {
+            level: { value: '--', unit: 'ft' },
+            outflow: { value: '--', unit: 'cfs' },
+            waterTemp: { value: '--', unit: '°F' },
+            airTemp: { value: '--', unit: '°F' }
+        };
+        
+        if (data[0].value.timeSeries && data[0].value.timeSeries.length > 0) {
+            const values = data[0].value.timeSeries[0].values[0].value;
+            if (values.length > 0) {
+                const current = parseFloat(values[values.length - 1].value);
+                result.level = { value: current.toFixed(2), unit: 'ft' };
+            }
+        }
+        
+        if (lake.siteId === '03128000' && data.length > 1) {
+            if (data[1].value.timeSeries && data[1].value.timeSeries.length > 0) {
+                const values = data[1].value.timeSeries[0].values[0].value;
+                if (values.length > 0) {
+                    const current = parseFloat(values[values.length - 1].value);
+                    result.outflow = { value: current.toFixed(1), unit: 'cfs' };
+                }
+            }
+            
+            if (data[2].value.timeSeries && data[2].value.timeSeries.length > 0) {
+                const values = data[2].value.timeSeries[0].values[0].value;
+                if (values.length > 0) {
+                    const current = (parseFloat(values[values.length - 1].value) * 9/5) + 32;
+                    result.waterTemp = { value: current.toFixed(0), unit: '°F' };
+                }
+            }
+            
+            if (data[3].value.timeSeries && data[3].value.timeSeries.length > 0) {
+                const values = data[3].value.timeSeries[0].values[0].value;
+                if (values.length > 0) {
+                    const current = (parseFloat(values[values.length - 1].value) * 9/5) + 32;
+                    result.airTemp = { value: current.toFixed(0), unit: '°F' };
+                }
+            }
+        }
+        
+        return result;
+    } catch (error) {
+        console.error('Error fetching lake data:', error);
+        return null;
+    }
+}
 
-        div.addEventListener('click', () => selectLake(lake));
-        favoritesList.appendChild(div);
-    });
+async function updateFavoritesList() {
+    favoritesList.innerHTML = '';
+    const allLakesList = document.getElementById('allLakesList');
+    if (allLakesList) allLakesList.innerHTML = '';
+    
+    // Get favorite and non-favorite lakes
+    const favoriteLakes = lakes.filter(lake => favorites.some(fav => fav.siteId === lake.siteId));
+    const otherLakes = lakes.filter(lake => !favorites.some(fav => fav.siteId === lake.siteId));
+    
+    // Display favorites
+    for (const lake of favoriteLakes) {
+        const lakeData = await fetchLakeCurrentData(lake);
+        const card = createLakeCard(lake, lakeData);
+        favoritesList.appendChild(card);
+    }
+    
+    // Display all other lakes
+    if (allLakesList) {
+        for (const lake of otherLakes) {
+            const lakeData = await fetchLakeCurrentData(lake);
+            const card = createLakeCard(lake, lakeData);
+            allLakesList.appendChild(card);
+        }
+    }
 }
 
 function removeFavorite(siteId) {
@@ -440,51 +571,60 @@ function removeFavorite(siteId) {
 function updateFavoriteButton() {
     if (!currentLake) return;
     const isFavorite = favorites.some(fav => fav.siteId === currentLake.siteId);
-    favoriteButton.innerHTML = `<i class="fas ${isFavorite ? 'fa-star' : 'fa-star'}"></i>`;
     favoriteButton.className = `favorite-button ${isFavorite ? 'favorited' : ''}`;
+    if (isFavorite) {
+        favoriteButton.querySelector('.far').style.display = 'none';
+        favoriteButton.querySelector('.fas').style.display = 'inline';
+    } else {
+        favoriteButton.querySelector('.far').style.display = 'inline';
+        favoriteButton.querySelector('.fas').style.display = 'none';
+    }
 }
+
+// Detail view state
+let activeMetric = 'waterLevel';
+let detailChart = null;
+let currentTimeRangeDays = 7;
 
 // Lake selection
 function selectLake(lake) {
     currentLake = lake;
     launchScreen.style.display = 'none';
     mainContent.style.display = 'block';
-    lakeName.textContent = `${lake.name} Level Tracker`;
-    siteId.textContent = lake.siteId;
-    updateFavoriteButton();
-
-    // Show/hide thresholds card and charts for Tappan Lake
-    const thresholdsBox = document.getElementById('thresholds-box');
-    const tempChartContainer = document.getElementById('tempChartContainer');
-    const outflowChartContainer = document.getElementById('outflowChartContainer');
-    const airTempChartContainer = document.getElementById('airTempChartContainer');
     
-    if (lake.siteId === '03128000') { // Tappan Lake siteId
-        thresholdsBox.style.display = 'block';
-        tempChartContainer.style.display = 'block';
-        outflowChartContainer.style.display = 'block';
-        airTempChartContainer.style.display = 'block';
+    // Update header
+    document.getElementById('lakeName').textContent = lake.name;
+    document.getElementById('lakeLocation').textContent = lake.location;
+    document.getElementById('detailSiteId').textContent = lake.siteId;
+    
+    // Update favorite button
+    const favoriteButton = document.getElementById('favoriteButton');
+    const isFavorite = favorites.some(fav => fav.siteId === lake.siteId);
+    favoriteButton.className = `favorite-button-detail ${isFavorite ? 'favorited' : ''}`;
+    if (isFavorite) {
+        favoriteButton.querySelector('.far').style.display = 'none';
+        favoriteButton.querySelector('.fas').style.display = 'inline';
     } else {
-        thresholdsBox.style.display = 'none';
-        tempChartContainer.style.display = 'none';
-        outflowChartContainer.style.display = 'none';
-        airTempChartContainer.style.display = 'none';
-        // Destroy charts if they exist
-        if (tempChart) {
-            tempChart.destroy();
-            tempChart = null;
-        }
-        if (outflowChart) {
-            outflowChart.destroy();
-            outflowChart = null;
-        }
-        if (airTempChart) {
-            airTempChart.destroy();
-            airTempChart = null;
-        }
+        favoriteButton.querySelector('.far').style.display = 'inline';
+        favoriteButton.querySelector('.fas').style.display = 'none';
     }
-
-    fetchLakeData(currentTimeRange, currentTempTimeRange, currentOutflowTimeRange);
+    
+    // Reset to water level tab
+    activeMetric = 'waterLevel';
+    currentTimeRangeDays = 7;
+    updateMetricTabs();
+    
+    // Update chart label to default
+    const chartLabelText = document.getElementById('chartLabelText');
+    if (chartLabelText) {
+        chartLabelText.textContent = '7 DAY HISTORY';
+    }
+    
+    // Load data for the selected metric
+    loadDetailViewData();
+    
+    // Set up metric tabs if not already done
+    setupMetricTabs();
 }
 
 // Back button
@@ -492,43 +632,314 @@ backButton.addEventListener('click', () => {
     launchScreen.style.display = 'flex';
     mainContent.style.display = 'none';
     currentLake = null;
-    if (levelChart) {
-        levelChart.destroy();
-    }
-    if (tempChart) {
-        tempChart.destroy();
-    }
-    if (outflowChart) {
-        outflowChart.destroy();
-    }
-    if (airTempChart) {
-        airTempChart.destroy();
+    if (detailChart) {
+        detailChart.destroy();
+        detailChart = null;
     }
 });
+
+// Metric tab switching
+function updateMetricTabs() {
+    document.querySelectorAll('.metric-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    const activeTab = document.querySelector(`[data-metric="${activeMetric}"]`);
+    if (activeTab) {
+        activeTab.classList.add('active');
+    }
+    
+    // Hide/show tabs based on lake
+    if (currentLake && currentLake.siteId !== '03128000') {
+        // Hide tabs that aren't available for non-Tappan lakes
+        document.getElementById('tabOutflow').style.display = 'none';
+        document.getElementById('tabWater').style.display = 'none';
+        document.getElementById('tabAir').style.display = 'none';
+        // Ensure water level is selected
+        if (activeMetric !== 'waterLevel') {
+            activeMetric = 'waterLevel';
+        }
+    } else {
+        document.getElementById('tabOutflow').style.display = 'flex';
+        document.getElementById('tabWater').style.display = 'flex';
+        document.getElementById('tabAir').style.display = 'flex';
+    }
+}
+
+// Set up metric tab event listeners
+function setupMetricTabs() {
+    document.querySelectorAll('.metric-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            activeMetric = tab.getAttribute('data-metric');
+            updateMetricTabs();
+            loadDetailViewData();
+        });
+    });
+}
+
+// Load data for detail view
+async function loadDetailViewData() {
+    if (!currentLake) return;
+    
+    const days = currentTimeRangeDays;
+    
+    try {
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - days);
+        
+        const formatDate = (date) => date.toISOString().split('T')[0];
+        const apiUrl = days >= 30 ? DV_API_URL : IV_API_URL;
+        
+        let dataUrl = '';
+        let parameterCd = '';
+        let label = '';
+        let unit = '';
+        
+        switch(activeMetric) {
+            case 'waterLevel':
+                dataUrl = `${apiUrl}?format=json&sites=${currentLake.siteId}&parameterCd=${currentLake.parameterCd || '62614'}&startDT=${formatDate(startDate)}&endDT=${formatDate(endDate)}&siteStatus=all`;
+                label = 'WATER LEVEL';
+                unit = 'ft';
+                break;
+            case 'outflow':
+                if (currentLake.siteId !== '03128000') return;
+                dataUrl = `${apiUrl}?format=json&sites=03128500&parameterCd=00060&startDT=${formatDate(startDate)}&endDT=${formatDate(endDate)}&siteStatus=all`;
+                label = 'OUTFLOW';
+                unit = 'cfs';
+                break;
+            case 'waterTemp':
+                if (currentLake.siteId !== '03128000') return;
+                dataUrl = `${apiUrl}?format=json&sites=03127989&parameterCd=00010&startDT=${formatDate(startDate)}&endDT=${formatDate(endDate)}&siteStatus=all`;
+                label = 'WATER TEMPERATURE';
+                unit = '°F';
+                break;
+            case 'airTemp':
+                if (currentLake.siteId !== '03128000') return;
+                dataUrl = `${apiUrl}?format=json&sites=402120081134200&parameterCd=00020&startDT=${formatDate(startDate)}&endDT=${formatDate(endDate)}&siteStatus=all`;
+                label = 'AIR TEMPERATURE';
+                unit = '°F';
+                break;
+        }
+        
+        if (!dataUrl) return;
+        
+        const response = await fetch(dataUrl);
+        const data = await response.json();
+        
+        if (data.value.timeSeries && data.value.timeSeries.length > 0) {
+            const timeSeries = data.value.timeSeries[0];
+            const values = timeSeries.values[0].value;
+            
+            if (values.length > 0) {
+                const currentValue = values[values.length - 1];
+                let displayValue = parseFloat(currentValue.value);
+                
+                // Convert to Fahrenheit for temperatures
+                if (activeMetric === 'waterTemp' || activeMetric === 'airTemp') {
+                    displayValue = (displayValue * 9/5) + 32;
+                }
+                
+                // Update current data display
+                document.getElementById('currentDataLabel').textContent = label;
+                document.getElementById('currentValueNumber').textContent = displayValue.toFixed(activeMetric === 'waterLevel' ? 2 : (activeMetric === 'outflow' ? 1 : 0));
+                document.getElementById('currentDataUnit').textContent = unit;
+                
+                // Update chart
+                updateDetailChart(values, days, unit);
+                
+                // Update chart label
+                const timeLabel = days === 7 ? '7 DAY HISTORY' : days === 30 ? '30 DAY HISTORY' : '1 YEAR HISTORY';
+                document.querySelector('.chart-label').textContent = timeLabel;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading detail data:', error);
+    }
+}
+
+// Update detail chart
+function updateDetailChart(data, days, unit) {
+    const ctx = document.getElementById('detailChart').getContext('2d');
+    
+    const formatDate = (date, days) => {
+        if (days <= 7) {
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        } else if (days <= 30) {
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        } else {
+            return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+        }
+    };
+    
+    const labels = data.map(item => formatDate(new Date(item.dateTime), days));
+    let values = data.map(item => parseFloat(item.value));
+    
+    // Convert to Fahrenheit for temperatures
+    if (activeMetric === 'waterTemp' || activeMetric === 'airTemp') {
+        values = values.map(v => (v * 9/5) + 32);
+    }
+    
+    if (detailChart) {
+        detailChart.destroy();
+    }
+    
+    detailChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: activeMetric,
+                data: values,
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                borderWidth: 2,
+                fill: false,
+                tension: 0.1,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    padding: 8,
+                    titleFont: {
+                        size: 12,
+                        family: "'Courier New', Courier, monospace"
+                    },
+                    bodyFont: {
+                        size: 12,
+                        family: "'Courier New', Courier, monospace"
+                    },
+                    backgroundColor: '#000',
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                    borderWidth: 1,
+                    titleColor: '#fff',
+                    bodyColor: '#fff'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    grid: {
+                        display: true,
+                        color: 'rgba(255, 255, 255, 0.1)',
+                        borderDash: [3, 3]
+                    },
+                    ticks: {
+                        font: {
+                            size: 10,
+                            family: "'Courier New', Courier, monospace"
+                        },
+                        color: 'rgba(255, 255, 255, 0.4)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 10,
+                            family: "'Courier New', Courier, monospace"
+                        },
+                        color: 'rgba(255, 255, 255, 0.4)',
+                        maxTicksLimit: days <= 7 ? 7 : (days <= 30 ? 10 : 12)
+                    }
+                }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
+            }
+        }
+    });
+}
+
+// Chart label dropdown functionality
+function setupChartLabelDropdown() {
+    const chartLabel = document.getElementById('chartLabel');
+    const chartLabelContainer = chartLabel?.closest('.chart-label-container');
+    const dropdown = document.getElementById('chartLabelDropdown');
+    const dropdownOptions = dropdown?.querySelectorAll('.dropdown-option');
+    
+    if (!chartLabel || !chartLabelContainer || !dropdown) return;
+    
+    // Toggle dropdown on label click
+    chartLabel.addEventListener('click', (e) => {
+        e.stopPropagation();
+        chartLabelContainer.classList.toggle('active');
+    });
+    
+    // Handle option selection
+    dropdownOptions?.forEach(option => {
+        option.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const days = parseInt(option.getAttribute('data-days'));
+            currentTimeRangeDays = days;
+            
+            // Update label text
+            document.getElementById('chartLabelText').textContent = option.textContent;
+            
+            // Close dropdown
+            chartLabelContainer.classList.remove('active');
+            
+            // Reload data
+            loadDetailViewData();
+        });
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!chartLabelContainer.contains(e.target)) {
+            chartLabelContainer.classList.remove('active');
+        }
+    });
+}
 
 // Favorite button
 favoriteButton.addEventListener('click', () => {
     if (currentLake) {
         toggleFavorite(currentLake);
+        // Update favorite button in detail view
+        const isFavorite = favorites.some(fav => fav.siteId === currentLake.siteId);
+        favoriteButton.className = `favorite-button-detail ${isFavorite ? 'favorited' : ''}`;
+        if (isFavorite) {
+            favoriteButton.querySelector('.far').style.display = 'none';
+            favoriteButton.querySelector('.fas').style.display = 'inline';
+        } else {
+            favoriteButton.querySelector('.far').style.display = 'inline';
+            favoriteButton.querySelector('.fas').style.display = 'none';
+        }
     }
 });
 
 // Initialize function
 async function initialize() {
-    // Initialize favorites list
-    updateFavoritesList();
-    
     // Ensure launch screen is visible and main content is hidden
     launchScreen.style.display = 'flex';
     mainContent.style.display = 'none';
     
     // Reset current lake
     currentLake = null;
+    
+    // Initialize favorites list (async)
+    await updateFavoritesList();
 }
 
 // Initialize when DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     initialize();
+    setupMetricTabs();
+    setupChartLabelDropdown();
 });
 
 // Existing lake data fetching and chart code
@@ -670,8 +1081,8 @@ function updateLevelChart(data, days) {
             datasets: [{
                 label: 'Lake Level (ft)',
                 data: values,
-                borderColor: '#3498db',
-                backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
                 borderWidth: 2,
                 fill: true,
                 tension: 0.1,
@@ -691,10 +1102,12 @@ function updateLevelChart(data, days) {
                     intersect: false,
                     padding: isMobile ? 12 : 6,
                     titleFont: {
-                        size: isMobile ? 14 : 12
+                        size: 12,
+                        family: "'Courier New', Courier, monospace"
                     },
                     bodyFont: {
-                        size: isMobile ? 14 : 12
+                        size: 12,
+                        family: "'Courier New', Courier, monospace"
                     }
                 }
             },
@@ -705,20 +1118,23 @@ function updateLevelChart(data, days) {
                         display: true,
                         text: 'Feet',
                         font: {
-                            size: isMobile ? 14 : 12
+                            size: isMobile ? 10 : 10,
+                            family: "'Courier New', Courier, monospace"
                         },
-                        color: '#ffffff'
+                        color: 'rgba(255, 255, 255, 0.4)'
                     },
                     grid: {
                         display: true,
-                        color: 'rgba(255, 255, 255, 0.1)'
+                        color: 'rgba(255, 255, 255, 0.1)',
+                        borderDash: [3, 3]
                     },
                     ticks: {
                         font: {
-                            size: isMobile ? 14 : 12
+                            size: isMobile ? 10 : 10,
+                            family: "'Courier New', Courier, monospace"
                         },
                         padding: isMobile ? 8 : 4,
-                        color: '#ffffff'
+                        color: 'rgba(255, 255, 255, 0.4)'
                     }
                 },
                 x: {
@@ -733,10 +1149,11 @@ function updateLevelChart(data, days) {
                         minRotation: isMobile ? 45 : 45,
                         maxTicksLimit: isMobile ? 6 : (days <= 7 ? 10 : (days <= 30 ? 15 : 12)),
                         font: {
-                            size: isMobile ? 12 : 11
+                            size: isMobile ? 10 : 10,
+                            family: "'Courier New', Courier, monospace"
                         },
                         padding: isMobile ? 8 : 4,
-                        color: '#ffffff'
+                        color: 'rgba(255, 255, 255, 0.4)'
                     }
                 }
             },
@@ -790,8 +1207,8 @@ function updateTempChart(data, days) {
             datasets: [{
                 label: 'Water Temperature (°F)',
                 data: values,
-                borderColor: '#e74c3c',
-                backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
                 borderWidth: 2,
                 fill: true,
                 tension: 0.1,
@@ -811,10 +1228,12 @@ function updateTempChart(data, days) {
                     intersect: false,
                     padding: isMobile ? 12 : 6,
                     titleFont: {
-                        size: isMobile ? 14 : 12
+                        size: 12,
+                        family: "'Courier New', Courier, monospace"
                     },
                     bodyFont: {
-                        size: isMobile ? 14 : 12
+                        size: 12,
+                        family: "'Courier New', Courier, monospace"
                     },
                     callbacks: {
                         label: function(context) {
@@ -830,20 +1249,23 @@ function updateTempChart(data, days) {
                         display: true,
                         text: '°F',
                         font: {
-                            size: isMobile ? 14 : 12
+                            size: isMobile ? 10 : 10,
+                            family: "'Courier New', Courier, monospace"
                         },
-                        color: '#ffffff'
+                        color: 'rgba(255, 255, 255, 0.4)'
                     },
                     grid: {
                         display: true,
-                        color: 'rgba(255, 255, 255, 0.1)'
+                        color: 'rgba(255, 255, 255, 0.1)',
+                        borderDash: [3, 3]
                     },
                     ticks: {
                         font: {
-                            size: isMobile ? 14 : 12
+                            size: isMobile ? 10 : 10,
+                            family: "'Courier New', Courier, monospace"
                         },
                         padding: isMobile ? 8 : 4,
-                        color: '#ffffff',
+                        color: 'rgba(255, 255, 255, 0.4)',
                         callback: function(value) {
                             return value.toFixed(1) + '°F';
                         }
@@ -861,10 +1283,11 @@ function updateTempChart(data, days) {
                         minRotation: isMobile ? 45 : 45,
                         maxTicksLimit: isMobile ? 6 : (days <= 7 ? 10 : (days <= 30 ? 15 : 12)),
                         font: {
-                            size: isMobile ? 12 : 11
+                            size: isMobile ? 10 : 10,
+                            family: "'Courier New', Courier, monospace"
                         },
                         padding: isMobile ? 8 : 4,
-                        color: '#ffffff'
+                        color: 'rgba(255, 255, 255, 0.4)'
                     }
                 }
             },
@@ -917,8 +1340,8 @@ function updateOutflowChart(data, days) {
             datasets: [{
                 label: 'Outflow (cfs)',
                 data: values,
-                borderColor: '#2ecc71',
-                backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
                 borderWidth: 2,
                 fill: true,
                 tension: 0.1,
@@ -938,10 +1361,12 @@ function updateOutflowChart(data, days) {
                     intersect: false,
                     padding: isMobile ? 12 : 6,
                     titleFont: {
-                        size: isMobile ? 14 : 12
+                        size: 12,
+                        family: "'Courier New', Courier, monospace"
                     },
                     bodyFont: {
-                        size: isMobile ? 14 : 12
+                        size: 12,
+                        family: "'Courier New', Courier, monospace"
                     },
                     callbacks: {
                         label: function(context) {
@@ -957,20 +1382,23 @@ function updateOutflowChart(data, days) {
                         display: true,
                         text: 'cfs',
                         font: {
-                            size: isMobile ? 14 : 12
+                            size: isMobile ? 10 : 10,
+                            family: "'Courier New', Courier, monospace"
                         },
-                        color: '#ffffff'
+                        color: 'rgba(255, 255, 255, 0.4)'
                     },
                     grid: {
                         display: true,
-                        color: 'rgba(255, 255, 255, 0.1)'
+                        color: 'rgba(255, 255, 255, 0.1)',
+                        borderDash: [3, 3]
                     },
                     ticks: {
                         font: {
-                            size: isMobile ? 14 : 12
+                            size: isMobile ? 10 : 10,
+                            family: "'Courier New', Courier, monospace"
                         },
                         padding: isMobile ? 8 : 4,
-                        color: '#ffffff',
+                        color: 'rgba(255, 255, 255, 0.4)',
                         callback: function(value) {
                             return value.toFixed(1) + ' cfs';
                         }
@@ -988,10 +1416,11 @@ function updateOutflowChart(data, days) {
                         minRotation: isMobile ? 45 : 45,
                         maxTicksLimit: isMobile ? 6 : (days <= 7 ? 10 : (days <= 30 ? 15 : 12)),
                         font: {
-                            size: isMobile ? 12 : 11
+                            size: isMobile ? 10 : 10,
+                            family: "'Courier New', Courier, monospace"
                         },
                         padding: isMobile ? 8 : 4,
-                        color: '#ffffff'
+                        color: 'rgba(255, 255, 255, 0.4)'
                     }
                 }
             },
@@ -1039,8 +1468,8 @@ function updateAirTempChart(data) {
             datasets: [{
                 label: 'Air Temperature (°F)',
                 data: values,
-                borderColor: '#f39c12',
-                backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
                 borderWidth: 2,
                 fill: true,
                 tension: 0.1,
@@ -1060,10 +1489,12 @@ function updateAirTempChart(data) {
                     intersect: false,
                     padding: isMobile ? 12 : 6,
                     titleFont: {
-                        size: isMobile ? 14 : 12
+                        size: 12,
+                        family: "'Courier New', Courier, monospace"
                     },
                     bodyFont: {
-                        size: isMobile ? 14 : 12
+                        size: 12,
+                        family: "'Courier New', Courier, monospace"
                     },
                     callbacks: {
                         label: function(context) {
@@ -1079,22 +1510,25 @@ function updateAirTempChart(data) {
                         display: true,
                         text: '°F',
                         font: {
-                            size: isMobile ? 14 : 12,
-                            weight: 'normal'
+                            size: isMobile ? 10 : 10,
+                            weight: 'normal',
+                            family: "'Courier New', Courier, monospace"
                         },
-                        color: '#ffffff'
+                        color: 'rgba(255, 255, 255, 0.4)'
                     },
                     grid: {
                         display: true,
-                        color: 'rgba(255, 255, 255, 0.1)'
+                        color: 'rgba(255, 255, 255, 0.1)',
+                        borderDash: [3, 3]
                     },
                     ticks: {
                         font: {
-                            size: isMobile ? 14 : 12,
-                            weight: 'normal'
+                            size: isMobile ? 10 : 10,
+                            weight: 'normal',
+                            family: "'Courier New', Courier, monospace"
                         },
                         padding: isMobile ? 8 : 4,
-                        color: '#ffffff',
+                        color: 'rgba(255, 255, 255, 0.4)',
                         callback: function(value) {
                             return value.toFixed(1) + '°F';
                         }
@@ -1116,7 +1550,7 @@ function updateAirTempChart(data) {
                             weight: 'normal'
                         },
                         padding: isMobile ? 8 : 4,
-                        color: '#ffffff'
+                        color: 'rgba(255, 255, 255, 0.4)'
                     }
                 }
             },
@@ -1137,13 +1571,16 @@ function updateAirTempChart(data) {
     });
 }
 
-// Time range selectors
-document.getElementById('timeRange').addEventListener('change', (e) => {
-    currentTimeRange = parseInt(e.target.value);
-    if (currentLake) {
-        fetchLakeData(currentTimeRange, currentTempTimeRange, currentOutflowTimeRange);
-    }
-});
+// Time range selectors (for old chart system if it exists)
+const timeRangeElement = document.getElementById('timeRange');
+if (timeRangeElement) {
+    timeRangeElement.addEventListener('change', (e) => {
+        currentTimeRange = parseInt(e.target.value);
+        if (currentLake) {
+            fetchLakeData(currentTimeRange, currentTempTimeRange, currentOutflowTimeRange);
+        }
+    });
+}
 
 document.getElementById('tempTimeRange').addEventListener('change', (e) => {
     currentTempTimeRange = parseInt(e.target.value);

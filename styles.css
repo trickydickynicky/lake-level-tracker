@@ -4,7 +4,7 @@
     box-sizing: border-box;
 }
 
-/* Global Styles for body and html */
+/* Global Styles */
 html, body {
     height: 100%;
     width: 100%;
@@ -14,34 +14,19 @@ html, body {
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    line-height: 1.6;
+    font-family: 'Courier New', Courier, monospace;
+    line-height: 1.4;
     color: #fff;
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
+    background: #000;
 }
 
-.background-image {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb');
-    background-size: cover;
-    background-position: center;
-    z-index: -2;
-}
-
+/* Remove background image and overlay */
+.background-image,
 .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: -1;
+    display: none;
 }
 
 /* Launch Screen Styles */
@@ -50,30 +35,78 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 2rem;
-    text-align: center;
+    padding: 1rem;
+    background: #000;
 }
 
 .launch-content {
-    max-width: 800px;
+    max-width: 500px;
     width: 100%;
-    text-align: center;
+}
+
+.app-header {
+    margin-bottom: 1.5rem;
+}
+
+.header-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.header-icon {
+    color: #3b82f6;
+    font-size: 1.5rem;
 }
 
 .launch-content h1 {
-    font-size: 3.5rem;
-    margin-bottom: 2rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: -0.02em;
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+}
+
+.header-subtitle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.subtitle {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.75rem;
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+}
+
+.refresh-button {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+.refresh-button:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .search-container {
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 }
 
 .search-box {
     position: relative;
-    max-width: 600px;
-    margin: 0 auto;
+    width: 100%;
 }
 
 .search-box i {
@@ -81,19 +114,18 @@ body {
     left: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.4);
 }
 
 .search-box input {
     width: 100%;
-    padding: 1rem 1rem 1rem 3rem;
-    border: none;
-    border-radius: 30px;
-    background: rgba(0, 0, 0, 0.6);
-    color: #fff;
-    font-size: 1.1rem;
-    backdrop-filter: blur(10px);
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0;
+    background: #000;
+    color: #fff;
+    font-size: 0.875rem;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .search-box input:focus {
@@ -102,11 +134,11 @@ body {
 }
 
 .search-results {
-    max-width: 600px;
-    margin: 1rem auto #000000;
-    background: rgba(0, 0, 0, 0.6);
-    border-radius: 15px;
-    padding: 1rem;
+    width: 100%;
+    margin: 0.5rem 0;
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.5rem;
     max-height: 300px;
     overflow-y: auto;
     display: none;
@@ -114,288 +146,762 @@ body {
 
 .search-result-item {
     padding: 1rem;
-    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 0.75rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    transition: background-color 0.2s ease;
+    background: #000;
 }
 
 .search-result-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.lake-card {
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.lake-card:active {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.lake-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+.lake-name {
+    font-size: 1.125rem;
+    font-weight: bold;
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.125rem;
+}
+
+.lake-location {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.lake-card-heart {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 1.25rem;
+    padding: 0.5rem;
+    background: transparent;
+    border: none;
+}
+
+.lake-card-heart.favorited {
+    color: #ef4444;
+}
+
+.lake-card-heart.favorited .far {
+    display: none;
+}
+
+.lake-card-heart .fas {
+    display: none;
+}
+
+.lake-card-heart.favorited .fas {
+    display: inline;
+}
+
+.lake-data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.lake-data-item {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.5rem;
+    background: #000;
+}
+
+.lake-data-label {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.lake-data-icon {
+    font-size: 0.875rem;
+}
+
+.lake-data-icon.level {
+    color: #3b82f6;
+}
+
+.lake-data-icon.outflow {
+    color: #a855f7;
+}
+
+.lake-data-icon.water {
+    color: #60a5fa;
+}
+
+.lake-data-icon.air {
+    color: #fb923c;
+}
+
+.lake-data-label-text {
+    font-size: 0.625rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
+}
+
+.lake-data-value {
+    font-size: 0.875rem;
+    font-weight: bold;
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+}
+
+.lake-data-unit {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .favorites-section {
-    max-width: 600px;
-    margin: 0 auto;
-    background: rgba(0, 0, 0, 0.6);
-    border-radius: 15px;
-    padding: 2rem;
+    width: 100%;
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1rem;
 }
 
-.favorites-section h2 {
-    margin-bottom: 1rem;
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.section-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+}
+
+.section-dot.red {
+    background: #ef4444;
+}
+
+.section-dot.black {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.favorites-section h2,
+.all-lakes-section h2 {
+    margin: 0;
     text-align: left;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.all-lakes-section {
+    width: 100%;
+    margin-top: 1.5rem;
 }
 
 .favorites-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.5rem;
 }
 
 .favorite-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+    padding: 0.75rem;
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     cursor: pointer;
-    transition: transform 0.3s ease;
+    transition: background-color 0.2s ease;
 }
 
 .favorite-item:hover {
-    transform: translateX(10px);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .favorite-item .remove-favorite {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.4);
     cursor: pointer;
-    transition: color 0.3s ease;
+    transition: color 0.2s ease;
 }
 
 .favorite-item .remove-favorite:hover {
     color: #fff;
 }
 
-.favorite-icon {
-    color: rgba(255, 255, 255, 0.5);
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.favorite-icon.favorited {
-    color: #ffd700; /* Yellow */
-}
-
 /* Main Content Styles */
 .container {
-    max-width: 1200px;
+    max-width: 500px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 0;
     position: relative;
     z-index: 1;
+    background: #000;
+    min-height: 100vh;
+}
+
+/* Detail View Styles */
+.detail-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1rem;
+    background: #000;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.detail-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.back-button-detail {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    font-family: 'Courier New', Courier, monospace;
+    padding: 0;
+}
+
+.back-button-detail:hover {
+    opacity: 0.7;
+}
+
+.favorite-button-detail {
+    background: none;
+    background-color: transparent;
+    border: none;
+    appearance: none;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    font-size: 1.5rem;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    appearance: none;           /* ← removes default button styling on many browsers */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.favorite-button-detail .fas {
+    display: none;
+}
+
+.favorite-button-detail.favorited {
+    color: #ef4444;
+}
+
+.favorite-button-detail.favorited .far {
+    display: none;
+}
+
+.favorite-button-detail.favorited .fas {
+    display: inline;
+}
+
+.detail-title-section {
+    margin-top: 0.5rem;
+}
+
+.detail-title-section h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.25rem 0;
+}
+
+.lake-location-detail {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+}
+
+.detail-main {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.metric-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+}
+
+.metric-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: #000;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Courier New', Courier, monospace;
+    min-width: 0;
+}
+
+.metric-tab i {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.metric-tab span {
+    font-size: 0.625rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.metric-tab.active {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.metric-tab.active i {
+    color: #ef4444;
+}
+
+.metric-tab.active span {
+    color: #ef4444;
+}
+
+.current-data-card {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1rem;
+    background: #000;
+}
+
+.current-data-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.current-data-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
+}
+
+.live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.625rem;
+    color: #10b981;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.live-indicator i {
+    font-size: 0.5rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.current-data-value {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+#currentValueNumber {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.current-data-unit {
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.chart-card {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1rem;
+    background: #000;
+}
+
+.chart-label-container {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.chart-label-clickable {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 0.25rem 0;
+    transition: color 0.2s ease;
+}
+
+.chart-label-clickable:hover {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.chart-label-clickable i {
+    font-size: 0.625rem;
+    margin-left: 0.5rem;
+    transition: transform 0.2s ease;
+}
+
+.chart-label-container.active .chart-label-clickable i {
+    transform: rotate(180deg);
+}
+
+.chart-label-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: none;
+    display: none;
+    z-index: 100;
+    margin-top: 0.25rem;
+}
+
+.chart-label-container.active .chart-label-dropdown {
+    display: block;
+}
+
+.dropdown-option {
+    padding: 0.75rem 1rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-option:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.chart-wrapper-detail {
+    position: relative;
+    width: 100%;
+    height: 220px;
+}
+
+.data-source-card {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    background: #000;
+}
+
+.data-source-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.data-source-text {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Courier New', Courier, monospace;
+    margin-bottom: 0.25rem;
+}
+
+.data-source-station {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .header-content {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     gap: 1rem;
-    text-align: center;
     width: 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1rem;
+    background: #000;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .header-controls {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    align-self: flex-start;
-    margin-left: 0;
-    width: 100%;
+    gap: 0.5rem;
+    justify-content: flex-start;
+    width: auto;
+    margin-bottom: 0.75rem;
 }
 
 .back-button {
     background: none;
     border: none;
-    color: #fff;
+    color: #ef4444;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    background: rgba(0, 0, 0, 0.4);
-    transition: background-color 0.3s ease;
-    margin-right: 0.5rem;
+    gap: 0.25rem;
+    padding: 0.5rem 0;
+    font-size: 0.875rem;
+    font-family: 'Courier New', Courier, monospace;
+    transition: opacity 0.2s ease;
 }
 
 .back-button:hover {
-    background: rgba(0, 0, 0, 0.6);
+    opacity: 0.7;
 }
 
 .lake-title-container {
     display: flex;
     align-items: center;
     gap: 1rem;
-    justify-content: center;
+    justify-content: space-between;
+    width: 100%;
 }
 
 .lake-title-container h1 {
-    margin-bottom: 0;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: -0.02em;
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .favorite-button {
     background: none;
     border: none;
-    color: #fff;
+    color: rgba(255, 255, 255, 0.4);
     cursor: pointer;
-    font-size: 1.2rem;
-    transition: transform 0.3s ease;
+    font-size: 1.5rem;
+    transition: all 0.2s ease;
     padding: 0.5rem;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 20px;
-    width: 40px;
-    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .favorite-button:hover {
-    transform: scale(1.1);
-    background: rgba(0, 0, 0, 0.6);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.favorite-button {
+    color: rgba(255, 255, 255, 0.4);
 }
 
 .favorite-button.favorited {
-    color: #ffd700;
+    color: #ef4444;
 }
 
-.chart-controls {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+.favorite-button .fas {
+    display: none;
 }
 
-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    padding: 2rem 0;
+.favorite-button.favorited .far {
+    display: none;
 }
 
-header h1 {
-    color: #fff;
-    font-size: 3rem;
-    margin-bottom: 0.5rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+.favorite-button.favorited .fas {
+    display: inline;
 }
 
 .site-id {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.75rem;
+    font-family: 'Courier New', Courier, monospace;
+    margin-top: 0.25rem;
+}
+
+header {
+    margin-bottom: 0;
+    padding: 0;
 }
 
 main {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
 }
 
 .card {
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 2rem;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    transition: transform 0.3s ease;
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0;
+    padding: 1rem;
     width: 100%;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    background: rgba(0, 0, 0, 0.7);
+.current-level {
+    text-align: left;
+    max-width: 100%;
 }
 
-.current-level {
-    text-align: center;
-    max-width: 400px;
+.current-level h2 {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .current-readings {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    margin: 1.5rem 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin: 1rem 0;
 }
 
 .reading {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.5rem;
+    background: #000;
 }
 
 .reading-label {
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.625rem;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 #current-level-value,
 #current-air-temp-value,
 #current-water-temp-value {
-    font-size: 2.5rem;
+    font-size: 0.875rem;
     font-weight: bold;
     color: #fff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    font-family: 'Courier New', Courier, monospace;
 }
 
 #last-updated {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.625rem;
+    font-family: 'Courier New', Courier, monospace;
+    margin-top: 0.5rem;
 }
 
 .charts-section {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1rem;
 }
 
 .chart-container {
     width: 100%;
-    margin-bottom: 0; /* Remove margin since we're using gap */
-}
-
-.chart-container:last-child {
     margin-bottom: 0;
 }
 
 .chart-header {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
 }
 
 .chart-title {
-    text-align: center;
     width: 100%;
+}
+
+.chart-title h2 {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.chart-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    justify-content: space-between;
 }
 
 .chart-wrapper {
     position: relative;
     width: 100%;
-    height: 400px; /* Fixed height for chart containers */
+    height: 220px;
 }
 
 .time-range-selector {
-    padding: 0.5rem 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 8px;
-    background: rgba(0, 0, 0, 0.4);
+    padding: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0;
+    background: #000;
     color: #fff;
-    font-size: 1rem;
+    font-size: 0.75rem;
     cursor: pointer;
-    backdrop-filter: blur(5px);
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .time-range-selector:hover {
-    border-color: rgba(255, 255, 255, 0.5);
-    background: rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.time-range-selector:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .time-range-selector option {
@@ -403,328 +909,103 @@ main {
     color: #fff;
 }
 
-.time-range-label {
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.8);
-    padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    min-width: 100px;
-    text-align: center;
-}
-
 footer {
-    text-align: center;
-    margin-top: 3rem;
-    color: rgba(255, 255, 255, 0.8);
+    text-align: left;
+    margin-top: 2rem;
+    padding: 1rem;
+    color: rgba(255, 255, 255, 0.4);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 footer a {
-    color: #fff;
+    color: rgba(255, 255, 255, 0.6);
     text-decoration: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    transition: border-color 0.3s ease;
+    font-size: 0.75rem;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 footer a:hover {
-    border-color: #fff;
+    color: #fff;
 }
 
 .thresholds {
-    max-width: 400px; /* Matches .current-level */
-    text-align: left; /* Align text left for readability */
+    max-width: 100%;
+    text-align: left;
 }
 
 .thresholds h2 {
-    font-size: 1.5rem; /* Matches .current-level h2 */
-    font-weight: 500;
-    color: #fff;
-    margin-bottom: 1rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Matches header h2 */
-    text-align: center; /* Center the title */
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .thresholds ul {
     list-style: none;
     padding: 0;
     margin: 0;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.95rem; /* Slightly smaller for list items */
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.75rem;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .thresholds li {
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
     line-height: 1.4;
+    padding: 0.25rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.thresholds .active-threshold {
-    color: #ff4444; /* Red for active thresholds */
-    font-weight: bold;
+.thresholds li:last-child {
+    border-bottom: none;
 }
 
-.weather-forecast {
-    max-width: 600px; /* Slightly wider for forecast items */
-    text-align: center; /* Center title and content */
-}
-
-.weather-forecast h2 {
-    font-size: 1.5rem; /* Matches .current-level h2 */
-    font-weight: 500;
-    color: #fff;
-    margin-bottom: 1rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Matches header h2 */
-    text-align: center; /* Center the title */
-}
-
-.forecast-container {
-    display: flex;
-    gap: 1rem;
-    overflow-x: auto; /* Horizontal scroll on mobile */
-    padding: 0.5rem 0;
-}
-
-.forecast-item {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 1rem;
-    min-width: 120px; /* Fixed width for each item */
-    text-align: center;
-    color: rgba(255, 255, 255, 0.8); /* Matches .thresholds ul */
-    font-size: 0.95rem; /* Matches .thresholds ul */
-}
-
-.forecast-item img {
-    width: 50px;
-    height: 50px;
-    margin: 0.5rem 0;
-}
-
-.forecast-item p {
-    margin: 0.25rem 0;
+/* Chart.js canvas background */
+#levelChart, #tempChart, #outflowChart, #airTempChart {
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
 }
 
 /* Mobile Optimizations */
 @media (max-width: 768px) {
     .container {
+        padding: 0;
+    }
+
+    .header-content {
         padding: 1rem;
     }
 
-    .header-content h1 {
-        font-size: 1.8rem;
-    }
-
-    .current-level {
-        padding: 1.5rem;
-    }
-
-    .thresholds {
-        padding: 1.5rem;
-        max-width: 100%;
-    }
-
-    .thresholds h2 {
-        font-size: 1.3rem;
-        text-align: center;
-    }
-
-    .thresholds ul {
-        font-size: 0.9rem;
-    }
-
-    .weather-forecast {
-        padding: 1.5rem;
-        max-width: 100%;
-    }
-
-    .weather-forecast h2 {
-        font-size: 1.3rem;
-        text-align: center;
-    }
-
-    .forecast-container {
-        flex-wrap: nowrap;
-    }
-
-    .forecast-item {
-        font-size: 0.9rem;
-    }
-
-    #current-level-value,
-    #current-air-temp-value,
-    #current-water-temp-value {
-        font-size: 2rem;
+    .lake-title-container h1 {
+        font-size: 1.25rem;
     }
 
     .current-readings {
-        gap: 1rem;
-        margin: 1rem 0;
-    }
-
-    .reading-label {
-        font-size: 1rem;
-    }
-
-    .charts-section {
-        gap: 2rem;
-        width: 100%;
-    }
-
-    .chart-container {
-        margin-bottom: 0;
-        padding: 1.5rem;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
     }
 
     .chart-wrapper {
-        height: 300px;
-        width: 100%;
+        height: 200px;
     }
 
     .chart-header {
-        flex-direction: column;
-        align-items: center;
-        padding: 0;
-        margin-bottom: 1.5rem;
-    }
-
-    .chart-title h2 {
-        margin-bottom: 1rem;
-        font-size: 1.3rem;
-    }
-
-    .chart-controls {
-        width: 100%;
-        justify-content: center;
-        gap: 1rem;
-    }
-
-    .time-range-selector {
-        padding: 0.8rem 1rem;
-        font-size: 1rem;
-        min-width: 140px;
-    }
-
-    /* Remove the problematic Chart.js overrides */
-    #levelChart, #tempChart {
-        width: 100% !important;
-        height: 100% !important;
-    }
-
-    canvas#levelChart, canvas#tempChart {
-        margin: 0;
-        width: 100% !important;
-    }
-
-    .weather-card {
-        padding: 1.5rem;
-        max-width: 100%;
-    }
-
-    #weather-temp {
-        font-size: 2rem;
-    }
-
-    .weather-icon-temp img {
-        width: 56px;
-        height: 56px;
-    }
-
-    .current-value {
-        font-size: 1rem;
-        padding: 0.4rem 0.8rem;
-        min-width: 80px;
-    }
-
-    .lake-title-container {
-        flex-direction: row;
-        gap: 0.5rem;
-    }
-
-    .favorite-button {
-        font-size: 1.1rem;
-        width: 36px;
-        height: 36px;
-    }
-
-    .time-range-label {
-        font-size: 0.9rem;
-        padding: 0.4rem 0.8rem;
-        min-width: 80px;
-    }
-
-    .header-controls {
-        gap: 0.5rem;
-        padding: 0 1rem;
+        margin-bottom: 0.75rem;
     }
 }
 
 /* Desktop Layout */
 @media (min-width: 769px) {
+    .container {
+        max-width: 500px;
+    }
+
     main {
-        grid-template-columns: 1fr 2fr;
-        display: grid;
+        padding: 1rem;
     }
-
-    .current-level {
-        grid-column: 1;
-        grid-row: 1;
-    }
-
-    .thresholds {
-        grid-column: 1;
-        grid-row: 2;
-    }
-
-    .weather-forecast {
-        grid-column: 1;
-        grid-row: 3;
-    }
-
-    .chart-container {
-        grid-column: 2;
-        grid-row: 1 / span 3; /* Spans three rows */
-    }
-
-    .header-content h1 {
-        font-size: 2.5rem;
-    }
-
-    .chart-header {
-        flex-direction: row;
-        justify-content: space-between;
-    }
-
-    .chart-wrapper {
-        margin: 0;
-        padding: 0;
-    }
-
-    .weather-card {
-        grid-column: 1;
-        grid-row: 2;
-    }
-
-    .thresholds {
-        grid-column: 1;
-        grid-row: 3;
-    }
-
-    .weather-forecast {
-        grid-column: 1;
-        grid-row: 4;
-    }
-}
-
-/* Chart.js canvas background */
-#levelChart, #tempChart, #outflowChart {
-    background: transparent;
-    border-radius: 10px;
-    padding: 1rem;
-}
-
-/* Ensure tooltips are readable on mobile */
-.chartjs-tooltip {
-    font-size: 14px !important;
-    padding: 8px 12px !important;
 }
 
 /* Remove all weather-related styles */
@@ -738,15 +1019,4 @@ footer a:hover {
 #weather-temp,
 #weather-description {
     display: none;
-}
-
-.current-value {
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: #ffffff;
-    padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    min-width: 100px;
-    text-align: center;
 }
