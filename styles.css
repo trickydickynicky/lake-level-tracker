@@ -198,6 +198,7 @@ body {
     padding: 0.5rem;
     background: transparent;
     border: none;
+    cursor: pointer;
 }
 
 .lake-card-heart.favorited {
@@ -239,7 +240,7 @@ body {
     font-size: 0.875rem;
 }
 
-.lake-data-icon.level {
+.lake-data-icon.waterLevel {
     color: #3b82f6;
 }
 
@@ -247,11 +248,11 @@ body {
     color: #a855f7;
 }
 
-.lake-data-icon.water {
+.lake-data-icon.waterTemp {
     color: #60a5fa;
 }
 
-.lake-data-icon.air {
+.lake-data-icon.airTemp {
     color: #fb923c;
 }
 
@@ -409,7 +410,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    appearance: none;           /* ← removes default button styling on many browsers */
+    appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
 }
@@ -459,7 +460,6 @@ body {
 
 .metric-tabs {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
     gap: 0.5rem;
 }
 
@@ -963,7 +963,7 @@ footer a:hover {
 }
 
 /* Chart.js canvas background */
-#levelChart, #tempChart, #outflowChart, #airTempChart {
+#levelChart, #tempChart, #outflowChart, #airTempChart, #detailChart {
     background: transparent;
     border-radius: 0;
     padding: 0;

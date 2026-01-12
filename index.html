@@ -70,31 +70,14 @@
                 </button>
             </div>
             <div class="detail-title-section">
-                <h1 id="lakeName">Tappan Lake</h1>
-                <p id="lakeLocation" class="lake-location-detail">Tappan, OH</p>
+                <h1 id="lakeName">Lake</h1>
+                <p id="lakeLocation" class="lake-location-detail">Location</p>
             </div>
         </header>
         
         <main class="detail-main">
-            <!-- Navigation Tabs -->
-            <div class="metric-tabs">
-                <button class="metric-tab active" data-metric="waterLevel" id="tabLevel">
-                    <i class="fas fa-tint"></i>
-                    <span>LEVEL</span>
-                </button>
-                <button class="metric-tab" data-metric="outflow" id="tabOutflow">
-                    <i class="fas fa-chart-line"></i>
-                    <span>OUTFLOW</span>
-                </button>
-                <button class="metric-tab" data-metric="waterTemp" id="tabWater">
-                    <i class="fas fa-thermometer-half"></i>
-                    <span>WATER</span>
-                </button>
-                <button class="metric-tab" data-metric="airTemp" id="tabAir">
-                    <i class="fas fa-wind"></i>
-                    <span>AIR</span>
-                </button>
-            </div>
+            <!-- Metric Tabs Generated Dynamically -->
+            <div class="metric-tabs" id="metricTabsContainer"></div>
 
             <!-- Current Data Display -->
             <div class="current-data-card">
@@ -133,7 +116,7 @@
             <div class="data-source-card">
                 <div class="data-source-label">DATA SOURCE</div>
                 <div class="data-source-text">USGS Water Services API</div>
-                <div class="data-source-station">Station: <span id="detailSiteId">03128000</span></div>
+                <div class="data-source-station">Station: <span id="detailSiteId">--</span></div>
             </div>
 
             <div class="card thresholds" id="thresholds-box" style="display: none;">
@@ -158,7 +141,6 @@
                     <li>Above 906 ft: State Route 210 flooded at various points</li>
                     <li>Above 907 ft: Country Market service station and ceramic shop closed</li>
                     <li>Above 909 ft: Tappan Marina closed</li>
-
                 </ul>
             </div>
         </main>
@@ -167,10 +149,9 @@
             <p>
                 Data provided by the
                 <a href="https://waterdata.usgs.gov" target="_blank">USGS Water Data</a>
-                
-              </p>    
+            </p>    
         </footer>
     </div>
     <script src="script.js"></script>
 </body>
-</html> 
+</html>
