@@ -126,7 +126,8 @@ const lakes = [
         location: 'Logan County, OH',
         parameterCd: '62615',
         fields: [
-            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03260500', parameterCd: '62615', tempConversion: false }
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03260500', parameterCd: '62615', tempConversion: false },
+            { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03260500', parameterCd: '00010', tempConversion: true },
         ]
     },
     {
@@ -135,7 +136,8 @@ const lakes = [
         location: 'Mercer County, OH',
         parameterCd: '62615',
         fields: [
-            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '403204084342601', parameterCd: '62615', tempConversion: false }
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '403204084342601', parameterCd: '62615', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03322485', parameterCd: '00060', tempConversion: false },
         ]
     },
     {
