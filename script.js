@@ -39,6 +39,8 @@ const lakes = [
         parameterCd: '62614',
         fields: [
             { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03120000', parameterCd: '62614', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03120500', parameterCd: '00060', tempConversion: false },
+            { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03119341', parameterCd: '00010', tempConversion: true },
             { key: 'airTemp', label: 'AIR TEMPERATURE', unit: '°F', icon: 'fa-wind', siteId: '402815081114300', parameterCd: '00020', tempConversion: true }
         ]
     },
@@ -65,12 +67,15 @@ const lakes = [
         ]
     },
     {
-        name: 'Senecaville Lake',
+        name: 'Seneca Lake',
         siteId: '03141000',
         location: 'Noble County, OH',
         parameterCd: '62614',
         fields: [
-            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03141000', parameterCd: '62614', tempConversion: false }
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03141000', parameterCd: '62614', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03141500', parameterCd: '00060', tempConversion: false },
+            { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03140900', parameterCd: '00010', tempConversion: true },
+            { key: 'airTemp', label: 'AIR TEMPERATURE', unit: '°F', icon: 'fa-wind', siteId: '395521081260500', parameterCd: '00020', tempConversion: true }
         ]
     },
     {
@@ -88,7 +93,10 @@ const lakes = [
         location: 'Harrison County, OH',
         parameterCd: '62614',
         fields: [
-            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03126500', parameterCd: '62614', tempConversion: false }
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03126500', parameterCd: '62614', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03126910', parameterCd: '00060', tempConversion: false },
+            { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03126395', parameterCd: '00010', tempConversion: true },
+            { key: 'airTemp', label: 'AIR TEMPERATURE', unit: '°F', icon: 'fa-wind', siteId: '401434081132100', parameterCd: '00020', tempConversion: true }
         ]
     },
     {
@@ -97,7 +105,10 @@ const lakes = [
         location: 'Harrison County, OH',
         parameterCd: '62614',
         fields: [
-            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03125500', parameterCd: '62614', tempConversion: false }
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03125500', parameterCd: '62614', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03126000', parameterCd: '00060', tempConversion: false },
+            { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03125338', parameterCd: '00010', tempConversion: true },
+            { key: 'airTemp', label: 'AIR TEMPERATURE', unit: '°F', icon: 'fa-wind', siteId: '401133081125300', parameterCd: '00020', tempConversion: true }
         ]
     },
     {
