@@ -146,7 +146,10 @@ const lakes = [
         location: 'Tuscarawas County, OH',
         parameterCd: '62614',
         fields: [
-            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03121000', parameterCd: '62614', tempConversion: false }
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03121000', parameterCd: '62614', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03121500', parameterCd: '00060', tempConversion: false },
+            { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03120820', parameterCd: '00010', tempConversion: true },
+            { key: 'airTemp', label: 'AIR TEMPERATURE', unit: '°F', icon: 'fa-wind', siteId: '403127081171000', parameterCd: '00020', tempConversion: true }
         ]
     },
     {
@@ -155,7 +158,8 @@ const lakes = [
         location: 'Warren County, OH',
         parameterCd: '62614',
         fields: [
-            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03242340', parameterCd: '62614', tempConversion: false }
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03242340', parameterCd: '62614', tempConversion: false },
+            { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03242350', parameterCd: '00010', tempConversion: true }
         ]
     },
     {
@@ -165,7 +169,8 @@ const lakes = [
     parameterCd: '62615',
     fields: [
         { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03090000', parameterCd: '62615', tempConversion: false },
-        { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03090500', parameterCd: '00060', tempConversion: false }
+        { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03090500', parameterCd: '00060', tempConversion: false },
+        { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03086500', parameterCd: '00010', tempConversion: true }
     ]
     },
     {
@@ -174,7 +179,9 @@ const lakes = [
         location: 'Portage County, OH',
         parameterCd: '62615',
         fields: [
-            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03092450', parameterCd: '62615', tempConversion: false }
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03092450', parameterCd: '62615', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03092460', parameterCd: '00060', tempConversion: false },
+            { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03092460', parameterCd: '00010', tempConversion: true }
         ]
     },
     {
