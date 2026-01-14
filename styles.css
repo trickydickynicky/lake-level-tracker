@@ -43,7 +43,10 @@ body {
     max-width: 500px;
     width: 100%;
 }
-
+.header-logo {
+    width: 50px;
+    object-fit: contain;
+}
 .app-header {
     margin-bottom: 1.5rem;
 }
