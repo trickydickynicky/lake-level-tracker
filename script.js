@@ -932,7 +932,7 @@ function selectLake(lake) {
     
     document.getElementById('lakeName').textContent = lake.name;
     document.getElementById('lakeLocation').textContent = lake.location;
-    document.getElementById('detailSiteId').textContent = lake.siteId;
+   
     
     const isFavorite = favorites.some(fav => fav.siteId === lake.siteId);
     favoriteButton.className = `favorite-button-detail ${isFavorite ? 'favorited' : ''}`;
