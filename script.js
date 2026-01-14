@@ -10,6 +10,27 @@ const lakes = [
             { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03128500', parameterCd: '00060', tempConversion: false },
             { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03127989', parameterCd: '00010', tempConversion: true },
             { key: 'airTemp', label: 'AIR TEMPERATURE', unit: '°F', icon: 'fa-wind', siteId: '402120081134200', parameterCd: '00020', tempConversion: true }
+        ],
+        thresholds: [
+            'At 899.30 ft: Summer Pool',
+            'At 898.3 ft: Stuck on Lift',
+            'At 900.5 ft: Remove Gangplank',
+            'At 901.5 ft: Remove Lift',
+            'Below 896.3 ft: Boat ramp closed',
+            'Below 897.3 ft: Public Boat Ramp closed',
+            'At 893.30 ft: Winter Pool',
+            'At 899 ft: Unregulated flow begins at orifice',
+            'Above 900.8 ft: Beach closed',
+            'Above 901.9 ft: County Rd. 25, Fisher Farm flooded',
+            'Above 902.5 ft: Franklin Twp. Rd. Monroe flooded',
+            'Above 902.7 ft: County Rd. 22, 250 yards off Rt. 250, flooded',
+            'Above 902.7 ft: State Rt. 646, 150 yards off Rt. 250, flooded',
+            'Above 903 ft: Twp. Rd. 313, 314 flooded',
+            'Above 905 ft: Twp. Rd. 215 flooded',
+            'Above 906 ft: State Route 250 flooded at various points',
+            'Above 906 ft: State Route 210 flooded at various points',
+            'Above 907 ft: Country Market service station and ceramic shop closed',
+            'Above 909 ft: Tappan Marina closed'
         ]
     },
     {
@@ -918,11 +939,35 @@ function selectLake(lake) {
     
     activeMetric = getAvailableMetrics(lake)[0];
     currentTimeRangeDays = 7;
-    
+  
+    displayThresholds(lake);
+
     createMetricTabs();
     loadDetailViewData();
 }
-
+function displayThresholds(lake) {
+    const thresholdsBox = document.getElementById('thresholds-box');
+    const thresholdsList = document.getElementById('thresholds-list');
+    
+    if (lake.thresholds && lake.thresholds.length > 0) {
+        // Clear existing items
+        thresholdsList.innerHTML = '';
+        
+        // Add new threshold items
+        lake.thresholds.forEach(threshold => {
+            const li = document.createElement('li');
+            li.textContent = threshold;
+            thresholdsList.appendChild(li);
+        });
+        
+        // Show thresholds section with proper heading
+        document.querySelector('.thresholds h2').textContent = `${lake.name} Thresholds`;
+        thresholdsBox.style.display = 'block';
+    } else {
+        // Hide thresholds section if lake doesn't have any
+        thresholdsBox.style.display = 'none';
+    }
+}
 // Back button
 backButton.addEventListener('click', () => {
     launchScreen.style.display = 'flex';
