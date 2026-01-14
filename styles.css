@@ -1023,3 +1023,10 @@ footer a:hover {
 #weather-description {
     display: none;
 }
+/* Desktop - make logo smaller */
+@media (min-width: 769px) {
+    .header-logo {
+        width: 32px;
+        height: 32px;
+    }
+}
