@@ -1,25 +1,257 @@
 // Lake data with flexible field definitions
 const rivers = [
     {
-        name: 'Ohio River at Cincinnati',
-        siteId: '03237500',
-        location: 'Hamilton County, OH',
+        name: 'Lock 1 Outlet O&E Canal OH ',
+        siteId: '410433081312500',
+        location: 'Summit County, OH',
         parameterCd: '00060',
         fields: [
-            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03237500', parameterCd: '62614', tempConversion: false },
-            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03237500', parameterCd: '00060', tempConversion: false },
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '410433081312500', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '410433081312500', parameterCd: '00060', tempConversion: false }
+        ]
+    },   
+    {
+        name: 'Cuyahoga River at Old Portage OH',
+        siteId: '04206000',
+        location: 'Summit County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '04206000', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '04206000', parameterCd: '00060', tempConversion: false }
         ]
     },
     {
-        name: 'Allegheny River at Pittsburgh',
-        siteId: '03050000',
-        location: 'Allegheny County, PA',
+        name: 'Cuyahoga River at Jaite OH',
+        siteId: '04206425',
+        location: 'Summit County, OH',
         parameterCd: '00060',
         fields: [
-            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03050000', parameterCd: '00060', tempConversion: false },
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '04206425', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '04206425', parameterCd: '00060', tempConversion: false }
         ]
     },
-    // Add more rivers as needed
+    {
+        name: 'Cuyahoga River at Independence OH',
+        siteId: '04208000',
+        location: 'Summit County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '04208000', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '04208000', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Cuyahoga River at Lower Harvard Brdg in Cleveland OH',
+        siteId: '04208503',
+        location: 'Summit County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '04208503', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '04208503', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Tuscarawas River at Clinton OH',
+        siteId: '03116000',
+        location: 'Summit County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03116000', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03116000', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Tuscarawas River at Massillon OH',
+        siteId: '03117000',
+        location: 'Summit County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03117000', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03117000', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Tuscarawas River at Newcomerstown OH',
+        siteId: '03129000',
+        location: 'Summit County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03129000', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03129000', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Tuscarawas River at New Philadelphia OH',
+        siteId: '03124800',
+        location: 'Summit County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03124800', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03124800', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Ohio River at Cincinnati OH',
+        siteId: '03255000',
+        location: 'Hamilton County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03255000', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03255000', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Ohio River at Ironton OH',
+        siteId: '03216070',
+        location: 'Lawrence County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03216070', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03216070', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Mahoning River at Leavittsburg OH',
+        siteId: '03094000',
+        location: 'Trumbull County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03094000', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03094000', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Mahoning River above West Ave at Youngstown OH',
+        siteId: '03098600',
+        location: 'Mahoning County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03098600', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03098600', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Mahoning River at Lowellville OH',
+        siteId: '03099500',
+        location: 'Mahoning County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03099500', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03099500', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Mahoning River bl Berlin Dam nr Berlin Center OH',
+        siteId: '03090500',
+        location: 'Mahoning County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03090500', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03090500', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Scioto River at Columbus OH',
+        siteId: '03227500',
+        location: 'Franklin County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03227500', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03227500', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Scioto River at Chillicothe OH',
+        siteId: '03231500',
+        location: 'Ross County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03231500', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03231500', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Great Miami River at Hamilton OH',
+        siteId: '03274000',
+        location: 'Butler County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03274000', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03274000', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Great Miami River at Dayton OH',
+        siteId: '03270500',
+        location: 'Montgomery County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03270500', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03270500', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Great Miami River at Middletown OH',
+        siteId: '03272100',
+        location: 'Butler County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03272100', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03272100', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+
+    {
+        name: 'Maumee River near Defiance OH',
+        siteId: '04192500',
+        location: 'Defiance County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '04192500', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '04192500', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Maumee River at Waterville OH',
+        siteId: '04193500',
+        location: 'Lucas County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '04193500', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '04193500', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Licking River near Newark OH',
+        siteId: '03146500',
+        location: 'Licking County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03146500', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03146500', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Hocking River at Athens OH',
+        siteId: '03159500',
+        location: 'Athens County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03159500', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03159500', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    {
+        name: 'Little Miami River at Milford OH',
+        siteId: '03245500',
+        location: 'Clermont County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03245500', parameterCd: '00065', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03245500', parameterCd: '00060', tempConversion: false }
+        ]
+    },
+    // ... (You can add more from the full summary list above, such as Paint Creek, Stillwater River, etc., using the same pattern)
 ];
 
 const lakes = [
@@ -55,6 +287,65 @@ const lakes = [
             'Above 907 ft: Country Market service station and ceramic shop closed',
             'Above 909 ft: Tappan Marina closed'
         ]
+    },
+    {
+        name: 'Seneca Lake',
+        siteId: '03141000',
+        location: 'Noble County, OH',
+        parameterCd: '62614',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03141000', parameterCd: '62614', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03141500', parameterCd: '00060', tempConversion: false },
+            { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03140900', parameterCd: '00010', tempConversion: true },
+            { key: 'airTemp', label: 'AIR TEMPERATURE', unit: '°F', icon: 'fa-wind', siteId: '395521081260500', parameterCd: '00020', tempConversion: true }
+        ]
+    },
+    {
+        name: 'Atwood Lake',
+        siteId: '03121000',
+        location: 'Tuscarawas County, OH',
+        parameterCd: '62614',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03121000', parameterCd: '62614', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03121500', parameterCd: '00060', tempConversion: false },
+            { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03120820', parameterCd: '00010', tempConversion: true },
+            { key: 'airTemp', label: 'AIR TEMPERATURE', unit: '°F', icon: 'fa-wind', siteId: '403127081171000', parameterCd: '00020', tempConversion: true }
+        ]
+    },
+    {
+        name: 'Clendening Lake',
+        siteId: '03126500',
+        location: 'Harrison County, OH',
+        parameterCd: '62614',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03126500', parameterCd: '62614', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03126910', parameterCd: '00060', tempConversion: false },
+            { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03126395', parameterCd: '00010', tempConversion: true },
+            { key: 'airTemp', label: 'AIR TEMPERATURE', unit: '°F', icon: 'fa-wind', siteId: '401434081132100', parameterCd: '00020', tempConversion: true }
+        ]
+    },
+    {
+        name: 'Piedmont Lake',
+        siteId: '03125500',
+        location: 'Harrison County, OH',
+        parameterCd: '62614',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03125500', parameterCd: '62614', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03126000', parameterCd: '00060', tempConversion: false },
+            { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03125338', parameterCd: '00010', tempConversion: true },
+            { key: 'airTemp', label: 'AIR TEMPERATURE', unit: '°F', icon: 'fa-wind', siteId: '401133081125300', parameterCd: '00020', tempConversion: true }
+        ]
+    },
+    {
+        name: 'Berlin Lake ',
+    siteId: '03090000',
+    location: 'Portage County, OH',
+    parameterCd: '62615',
+    fields: [
+        { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03090000', parameterCd: '62615', tempConversion: false },
+        { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03090500', parameterCd: '00060', tempConversion: false },
+        { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03086500', parameterCd: '00010', tempConversion: true }
+    ]
     },
     {
         name: 'Clarence J. Brown Reservoir',
@@ -110,18 +401,7 @@ const lakes = [
             { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03228400', parameterCd: '00010', tempConversion: true },
         ]
     },
-    {
-        name: 'Seneca Lake',
-        siteId: '03141000',
-        location: 'Noble County, OH',
-        parameterCd: '62614',
-        fields: [
-            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03141000', parameterCd: '62614', tempConversion: false },
-            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03141500', parameterCd: '00060', tempConversion: false },
-            { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03140900', parameterCd: '00010', tempConversion: true },
-            { key: 'airTemp', label: 'AIR TEMPERATURE', unit: '°F', icon: 'fa-wind', siteId: '395521081260500', parameterCd: '00020', tempConversion: true }
-        ]
-    },
+    
     {
         name: 'West Fork Mill Creek Reservoir',
         siteId: '03256500',
@@ -129,30 +409,6 @@ const lakes = [
         parameterCd: '62614',
         fields: [
             { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03256500', parameterCd: '62614', tempConversion: false }
-        ]
-    },
-    {
-        name: 'Clendening Lake',
-        siteId: '03126500',
-        location: 'Harrison County, OH',
-        parameterCd: '62614',
-        fields: [
-            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03126500', parameterCd: '62614', tempConversion: false },
-            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03126910', parameterCd: '00060', tempConversion: false },
-            { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03126395', parameterCd: '00010', tempConversion: true },
-            { key: 'airTemp', label: 'AIR TEMPERATURE', unit: '°F', icon: 'fa-wind', siteId: '401434081132100', parameterCd: '00020', tempConversion: true }
-        ]
-    },
-    {
-        name: 'Piedmont Lake',
-        siteId: '03125500',
-        location: 'Harrison County, OH',
-        parameterCd: '62614',
-        fields: [
-            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03125500', parameterCd: '62614', tempConversion: false },
-            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03126000', parameterCd: '00060', tempConversion: false },
-            { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03125338', parameterCd: '00010', tempConversion: true },
-            { key: 'airTemp', label: 'AIR TEMPERATURE', unit: '°F', icon: 'fa-wind', siteId: '401133081125300', parameterCd: '00020', tempConversion: true }
         ]
     },
     {
@@ -184,18 +440,7 @@ const lakes = [
             { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03322485', parameterCd: '00060', tempConversion: false },
         ]
     },
-    {
-        name: 'Atwood Lake',
-        siteId: '03121000',
-        location: 'Tuscarawas County, OH',
-        parameterCd: '62614',
-        fields: [
-            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03121000', parameterCd: '62614', tempConversion: false },
-            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03121500', parameterCd: '00060', tempConversion: false },
-            { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03120820', parameterCd: '00010', tempConversion: true },
-            { key: 'airTemp', label: 'AIR TEMPERATURE', unit: '°F', icon: 'fa-wind', siteId: '403127081171000', parameterCd: '00020', tempConversion: true }
-        ]
-    },
+    
     {
         name: 'Caesar Creek Lake',
         siteId: '03242340',
@@ -205,17 +450,6 @@ const lakes = [
             { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03242340', parameterCd: '62614', tempConversion: false },
             { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03242350', parameterCd: '00010', tempConversion: true }
         ]
-    },
-    {
-        name: 'Berlin Lake ',
-    siteId: '03090000',
-    location: 'Portage County, OH',
-    parameterCd: '62615',
-    fields: [
-        { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03090000', parameterCd: '62615', tempConversion: false },
-        { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03090500', parameterCd: '00060', tempConversion: false },
-        { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03086500', parameterCd: '00010', tempConversion: true }
-    ]
     },
     {
         name: 'Michael J Kirwan Reservoir',
@@ -287,7 +521,8 @@ const lakes = [
         location: 'Chautauqua County, NY',
         parameterCd: '62615',
         fields: [
-            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03013946', parameterCd: '62615', tempConversion: false }
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03013946', parameterCd: '62615', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03014500', parameterCd: '00060', tempConversion: false }
         ]
     },
     {
@@ -583,6 +818,12 @@ const searchResults = document.getElementById('searchResults');
 const favoritesList = document.getElementById('favoritesList');
 const backButton = document.getElementById('backButton');
 const favoriteButton = document.getElementById('favoriteButton');
+
+// Example: Call on page load
+document.addEventListener('DOMContentLoaded', () => {
+    loadActiveRivers(); // Load rivers dynamically
+    // Your existing lake loading code remains unchanged
+  });
 
 // Search functionality
 lakeSearch.addEventListener('input', (e) => {
