@@ -1067,15 +1067,26 @@ async function initialize() {
             e.target.classList.add('active');
             currentItemType = e.target.getAttribute('data-type');
             
-            // Only update the all items list, not favorites
             const dataSource = currentItemType === 'lakes' ? lakes : rivers;
             const otherItems = dataSource.filter(item => !favorites.some(fav => fav.siteId === item.siteId));
             
             allItemsList.innerHTML = '';
+            
+            // Create all cards immediately with placeholder data
+            const cards = [];
             for (const item of otherItems) {
-                const itemData = await fetchLakeCurrentData(item);
-                const card = createLakeCard(item, itemData);
+                const card = createLakeCard(item, null);
+                card.setAttribute('data-site-id', item.siteId);
                 allItemsList.appendChild(card);
+                cards.push({ card, item });
+            }
+            
+            // Fetch data in background and update cards as they arrive
+            for (const { card, item } of cards) {
+                const itemData = await fetchLakeCurrentData(item);
+                const updatedCard = createLakeCard(item, itemData);
+                updatedCard.setAttribute('data-site-id', item.siteId);
+                card.replaceWith(updatedCard);
             }
         });
     });
