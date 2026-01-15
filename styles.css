@@ -140,7 +140,7 @@ body {
     width: 100%;
     margin: 0.5rem 0;
     background: #000;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     padding: 0.5rem;
     max-height: 300px;
     overflow-y: auto;
@@ -158,6 +158,33 @@ body {
 
 .search-result-item:hover {
     background: rgba(255, 255, 255, 0.05);
+}
+.toggle-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.toggle-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: #000;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.toggle-btn.active {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
 }
 
 .lake-card {
@@ -286,6 +313,7 @@ body {
     background: #000;
     border: 1px solid rgba(255, 255, 255, 0.2);
     padding: 1rem;
+    margin-bottom: 2rem; 
 }
 
 .section-header {

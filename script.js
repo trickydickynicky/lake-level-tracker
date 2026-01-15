@@ -1,4 +1,27 @@
 // Lake data with flexible field definitions
+const rivers = [
+    {
+        name: 'Ohio River at Cincinnati',
+        siteId: '03237500',
+        location: 'Hamilton County, OH',
+        parameterCd: '00060',
+        fields: [
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03237500', parameterCd: '62614', tempConversion: false },
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03237500', parameterCd: '00060', tempConversion: false },
+        ]
+    },
+    {
+        name: 'Allegheny River at Pittsburgh',
+        siteId: '03050000',
+        location: 'Allegheny County, PA',
+        parameterCd: '00060',
+        fields: [
+            { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03050000', parameterCd: '00060', tempConversion: false },
+        ]
+    },
+    // Add more rivers as needed
+];
+
 const lakes = [
     {
         name: 'Tappan Lake',
@@ -243,7 +266,8 @@ const lakes = [
         location: 'Broome County, NY',
         parameterCd: '62615',
         fields: [
-            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '01511000', parameterCd: '62615', tempConversion: false }
+            { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '01511000', parameterCd: '62615', tempConversion: false },
+            { key: 'airTemp', label: 'AIR TEMPERATURE', unit: '°F', icon: 'fa-wind', siteId: '01511000', parameterCd: '00021', tempConversion: false }
             
             
         ]
@@ -546,6 +570,7 @@ let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 let detailChart = null;
 let currentTimeRangeDays = 7;
 let activeMetric = 'waterLevel';
+let currentItemType = 'lakes';
 
 const IV_API_URL = 'https://waterservices.usgs.gov/nwis/iv/';
 const DV_API_URL = 'https://waterservices.usgs.gov/nwis/dv/';
@@ -567,13 +592,17 @@ lakeSearch.addEventListener('input', (e) => {
         return;
     }
 
-    const results = lakes.filter(lake =>
-        lake.name?.toLowerCase().includes(searchTerm) ||
-        lake.location?.toLowerCase().includes(searchTerm)
+    // Search BOTH lakes and rivers
+    const allData = [...lakes, ...rivers];
+    const results = allData.filter(item =>
+        item.name?.toLowerCase().includes(searchTerm) ||
+        item.location?.toLowerCase().includes(searchTerm)
     );
 
     displaySearchResults(results);
 });
+
+
 
 function createLakeCard(lake, lakeData = null) {
     const isFavorite = favorites.some(fav => fav.siteId === lake.siteId);
@@ -714,27 +743,28 @@ async function fetchLakeCurrentData(lake) {
 
 async function updateFavoritesList() {
     favoritesList.innerHTML = '';
-    const allLakesList = document.getElementById('allLakesList');
-    if (allLakesList) allLakesList.innerHTML = '';
+    allItemsList.innerHTML = '';
     
-    const favoriteLakes = lakes.filter(lake => favorites.some(fav => fav.siteId === lake.siteId));
-    const otherLakes = lakes.filter(lake => !favorites.some(fav => fav.siteId === lake.siteId));
+    // Get the right data source
+    const dataSource = currentItemType === 'lakes' ? lakes : rivers;
     
-    for (const lake of favoriteLakes) {
-        const lakeData = await fetchLakeCurrentData(lake);
-        const card = createLakeCard(lake, lakeData);
+    // Favorites should ALWAYS show all favorited items (lakes AND rivers)
+    const favoriteLakes = [...lakes, ...rivers].filter(item => favorites.some(fav => fav.siteId === item.siteId));
+    const otherItems = dataSource.filter(item => !favorites.some(fav => fav.siteId === item.siteId));
+    
+    for (const item of favoriteLakes) {
+        const itemData = await fetchLakeCurrentData(item);
+        const card = createLakeCard(item, itemData);
         favoritesList.appendChild(card);
     }
     
-    if (allLakesList) {
-        for (const lake of otherLakes) {
-            const lakeData = await fetchLakeCurrentData(lake);
-            const card = createLakeCard(lake, lakeData);
-            allLakesList.appendChild(card);
-        }
+    for (const item of otherItems) {
+        const itemData = await fetchLakeCurrentData(item);
+        const card = createLakeCard(item, itemData);
+        allItemsList.appendChild(card);
     }
-}
 
+}
 function updateFavoriteButton() {
     if (!currentLake) return;
     const isFavorite = favorites.some(fav => fav.siteId === currentLake.siteId);
@@ -1027,7 +1057,30 @@ async function initialize() {
     mainContent.style.display = 'none';
     currentLake = null;
     await updateFavoritesList();
+    
+   
+    
+    // Handle lakes/rivers toggle
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            currentItemType = e.target.getAttribute('data-type');
+            
+            // Only update the all items list, not favorites
+            const dataSource = currentItemType === 'lakes' ? lakes : rivers;
+            const otherItems = dataSource.filter(item => !favorites.some(fav => fav.siteId === item.siteId));
+            
+            allItemsList.innerHTML = '';
+            for (const item of otherItems) {
+                const itemData = await fetchLakeCurrentData(item);
+                const card = createLakeCard(item, itemData);
+                allItemsList.appendChild(card);
+            }
+        });
+    });
 }
+
 
 // Initialize when DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function() {
