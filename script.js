@@ -1,3 +1,5 @@
+
+
 // Lake data with flexible field definitions
 const rivers = [
     {
@@ -251,6 +253,17 @@ const rivers = [
             { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03245500', parameterCd: '00060', tempConversion: false }
         ]
     },
+  {
+name: 'Licking River near Newark OH',
+siteId: '03146500',
+location: 'Ohio',
+parameterCd: '00060',
+fields: [
+{ key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03146500', parameterCd: '00065', tempConversion: false },
+{ key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03146500', parameterCd: '00060', tempConversion: false }
+]
+},
+
     // ... (You can add more from the full summary list above, such as Paint Creek, Stillwater River, etc., using the same pattern)
 ];
 
@@ -826,7 +839,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 // Search functionality
-lakeSearch.addEventListener('input', (e) => {
+lakeSearch.addEventListener('input', async (e) => {
     const searchTerm = e.target.value.toLowerCase();
     if (searchTerm.length < 2) {
         searchResults.style.display = 'none';
@@ -840,7 +853,15 @@ lakeSearch.addEventListener('input', (e) => {
         item.location?.toLowerCase().includes(searchTerm)
     );
 
-    displaySearchResults(results);
+    // Fetch data for all results before displaying
+    const resultsWithData = await Promise.all(
+        results.map(async (item) => {
+            const itemData = await fetchLakeCurrentData(item);
+            return { item, itemData };
+        })
+    );
+
+    displaySearchResults(resultsWithData.map(r => r.item), resultsWithData.map(r => r.itemData));
 });
 
 
@@ -899,7 +920,7 @@ function createLakeCard(lake, lakeData = null) {
     return div;
 }
 
-function displaySearchResults(results) {
+function displaySearchResults(results, dataArray) {
     searchResults.innerHTML = '';
     if (results.length === 0) {
         searchResults.style.display = 'none';
@@ -907,8 +928,8 @@ function displaySearchResults(results) {
     }
 
     searchResults.style.display = 'block';
-    results.forEach(lake => {
-        const card = createLakeCard(lake);
+    results.forEach((lake, index) => {
+        const card = createLakeCard(lake, dataArray[index]);
         searchResults.appendChild(card);
     });
 }
