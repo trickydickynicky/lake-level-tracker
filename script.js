@@ -1,4 +1,74 @@
+const CWMS_BASE = 'https://cwms-data.usace.army.mil/cwms-data/timeseries';
 
+const TAPPAN_INFLOW_TS_NAMES = [
+    'Tappan-Lake.Flow.Inst.15Minutes.0.OBS'
+];
+
+async function fetchTappanInflow(days) {
+    const name = 'Tappan-Lake.Flow.Inst.15Minutes.0.OBS';
+    const nameDV = 'Tappan-Lake.Flow.Ave.~1Day.1Day.OBS'; // daily average for longer views
+
+    const formatForCWMS = (date) => {
+        const pad = n => String(n).padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}` +
+               `T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    };
+
+    const fetchCWMS = async (tsName, windowDays) => {
+        const end = new Date();
+        const begin = new Date();
+        begin.setDate(begin.getDate() - windowDays);
+        const url = `${CWMS_BASE}?name=${encodeURIComponent(tsName)}&office=LRH` +
+            `&begin=${encodeURIComponent(formatForCWMS(begin))}` +
+            `&end=${encodeURIComponent(formatForCWMS(end))}` +
+            `&format=json&timezone=EST5EDT&page-size=500`;
+        const res = await fetch(url);
+        if (!res.ok) return null;
+        return res.json();
+    };
+
+    try {
+        // Always get current value from 2-day IV window
+        const recentData = await fetchCWMS(name, 2);
+        const recentValues = (recentData?.values || []).filter(v => v[1] !== null);
+        if (recentValues.length === 0) return null;
+        const current = recentValues[recentValues.length - 1][1];
+
+        // For chart series, pick strategy based on time range
+        let chartValues = recentValues;
+
+        if (days <= 7) {
+            // 7-day IV: 672 points but page-size=500 gets most of it, good enough
+            const data = await fetchCWMS(name, days);
+            const vals = (data?.values || []).filter(v => v[1] !== null);
+            if (vals.length > 0) chartValues = vals;
+
+        } else {
+            // 30-day or 1-year: try daily average time series
+            const data = await fetchCWMS(nameDV, days);
+            const vals = (data?.values || []).filter(v => v[1] !== null);
+            if (vals.length > 0) {
+                chartValues = vals;
+            } else {
+                // fallback: just use the 2-day recent data if DV name doesn't exist
+                console.warn('CWMS daily TS not found, falling back to recent IV data');
+            }
+        }
+
+        return {
+            current,
+            series: chartValues.map(v => ({
+                dateTime: new Date(v[0]).toISOString(),
+                value: String(v[1])
+            })),
+            units: recentData.units || 'cfs'
+        };
+
+    } catch (e) {
+        console.warn('CWMS fetch failed:', e);
+        return null;
+    }
+}
 
 // Lake data with flexible field definitions
 const rivers = [
@@ -276,8 +346,10 @@ const lakes = [
         fields: [
             { key: 'waterLevel', label: 'WATER LEVEL', unit: 'ft', icon: 'fa-tint', siteId: '03128000', parameterCd: '62614', tempConversion: false },
             { key: 'outflow', label: 'OUTFLOW', unit: 'cfs', icon: 'fa-chart-line', siteId: '03128500', parameterCd: '00060', tempConversion: false },
+            { key: 'inflow', label: 'INFLOW', unit: 'cfs', icon: 'fa-arrow-right', siteId: 'TPPN', parameterCd: 'USACE', tempConversion: false },
+            { key: 'flowCombo', label: 'OUTFLOW + INFLOW', unit: 'cfs', icon: 'fa-exchange-alt', siteId: 'TPPN', parameterCd: 'USACE_COMBO', tempConversion: false },
             { key: 'waterTemp', label: 'WATER TEMPERATURE', unit: '°F', icon: 'fa-thermometer-half', siteId: '03127989', parameterCd: '00010', tempConversion: true },
-            { key: 'airTemp', label: 'AIR TEMPERATURE', unit: '°F', icon: 'fa-wind', siteId: '402120081134200', parameterCd: '00020', tempConversion: true }
+            { key: 'airTemp', label: 'AIR TEMPERATURE', unit: '°F', icon: 'fa-wind', siteId: '402120081134200', parameterCd: '00020', tempConversion: true },
         ],
         thresholds: [
             'At 899.30 ft: Summer Pool',
@@ -952,50 +1024,47 @@ async function fetchLakeCurrentData(lake) {
         const endDate = new Date();
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - 1);
-        
         const formatDate = (date) => date.toISOString().split('T')[0];
-        const apiUrl = IV_API_URL;
-        
         const result = {};
-        
-        // Fetch data for each field the lake has
+
         if (lake.fields) {
-            const requests = lake.fields.map(field =>
-                fetch(`${apiUrl}?format=json&sites=${field.siteId}&parameterCd=${field.parameterCd}&startDT=${formatDate(startDate)}&endDT=${formatDate(endDate)}&siteStatus=all`)
+            // Handle USGS fields as before
+            const usgsFields = lake.fields.filter(f => f.parameterCd !== 'USACE' && f.parameterCd !== 'USACE_COMBO');
+            const requests = usgsFields.map(field =>
+                fetch(`${IV_API_URL}?format=json&sites=${field.siteId}&parameterCd=${field.parameterCd}&startDT=${formatDate(startDate)}&endDT=${formatDate(endDate)}&siteStatus=all`)
             );
-            
             const responses = await Promise.all(requests);
             const dataList = await Promise.all(responses.map(r => r.json()));
-            
-            lake.fields.forEach((field, index) => {
+
+            usgsFields.forEach((field, index) => {
                 const data = dataList[index];
                 if (data.value.timeSeries && data.value.timeSeries.length > 0) {
                     const values = data.value.timeSeries[0].values[0].value;
                     if (values.length > 0) {
                         let currentValue = parseFloat(values[values.length - 1].value);
-                        
                         if (field.tempConversion) {
                             currentValue = (currentValue * 9/5) + 32;
-                            result[field.key] = { 
-                                value: currentValue.toFixed(0), 
-                                unit: field.unit 
-                            };
+                            result[field.key] = { value: currentValue.toFixed(0), unit: field.unit };
                         } else if (field.key === 'outflow') {
-                            result[field.key] = { 
-                                value: currentValue.toFixed(1), 
-                                unit: field.unit 
-                            };
+                            result[field.key] = { value: currentValue.toFixed(1), unit: field.unit };
                         } else {
-                            result[field.key] = { 
-                                value: currentValue.toFixed(2), 
-                                unit: field.unit 
-                            };
+                            result[field.key] = { value: currentValue.toFixed(2), unit: field.unit };
                         }
                     }
                 }
             });
+
+            // Handle USACE inflow fields
+            const hasUSACE = lake.fields.some(f => f.parameterCd === 'USACE' || f.parameterCd === 'USACE_COMBO');
+            if (hasUSACE) {
+                const inflowResult = await fetchTappanInflow(2);
+                if (inflowResult) {
+                    result['inflow'] = { value: inflowResult.current.toFixed(1), unit: 'cfs' };
+                    // combo card just shows inflow value as a teaser
+                    result['flowCombo'] = { value: `${result['outflow']?.value || '--'} / ${inflowResult.current.toFixed(1)}`, unit: 'cfs' };
+                }
+            }
         }
-        
         return result;
     } catch (error) {
         console.error('Error fetching lake data:', error);
@@ -1084,7 +1153,58 @@ async function loadDetailViewData() {
     
     const field = getFieldForLake(currentLake, activeMetric);
     if (!field) return;
-    
+
+    // USACE inflow — bypass USGS fetch
+if (activeMetric === 'inflow' && currentLake.name === 'Tappan Lake') {
+    const result = await fetchTappanInflow(currentTimeRangeDays);
+    if (result) {
+        document.getElementById('currentDataLabel').textContent = 'INFLOW';
+        document.getElementById('currentValueNumber').textContent = result.current.toFixed(1);
+        document.getElementById('currentDataUnit').textContent = 'cfs';
+        const timeLabel = currentTimeRangeDays === 7 ? '7 DAY HISTORY' : currentTimeRangeDays === 30 ? '30 DAY HISTORY' : '1 YEAR HISTORY';
+        document.getElementById('chartLabelText').textContent = timeLabel;
+        updateDetailChart(result.series, currentTimeRangeDays, field);
+    } else {
+        document.getElementById('currentValueNumber').textContent = '--';
+        document.getElementById('currentDataLabel').textContent = 'INFLOW';
+        document.getElementById('currentDataUnit').textContent = 'cfs';
+    }
+    return; // skip USGS fetch below
+}
+    // Outflow + Inflow combo chart
+if (activeMetric === 'flowCombo' && currentLake.name === 'Tappan Lake') {
+    const [inflowResult, outflowData] = await Promise.all([
+        fetchTappanInflow(currentTimeRangeDays),
+        (async () => {
+            const end = new Date();
+            const begin = new Date();
+            begin.setDate(begin.getDate() - currentTimeRangeDays);
+            const formatDate = d => d.toISOString().split('T')[0];
+            const apiUrl = currentTimeRangeDays >= 30 ? DV_API_URL : IV_API_URL;
+            const res = await fetch(`${apiUrl}?format=json&sites=03128500&parameterCd=00060&startDT=${formatDate(begin)}&endDT=${formatDate(end)}&siteStatus=all`);
+            return res.json();
+        })()
+    ]);
+
+    const outflowValues = outflowData?.value?.timeSeries?.[0]?.values?.[0]?.value || [];
+
+    document.getElementById('currentDataLabel').textContent = 'OUTFLOW + INFLOW';
+    document.getElementById('currentValueNumber').textContent =
+        `${parseFloat(outflowValues[outflowValues.length - 1]?.value || 0).toFixed(1)} / ${inflowResult?.current?.toFixed(1) || '--'}`;
+    document.getElementById('currentDataUnit').textContent = 'cfs';
+
+    const timeLabel = currentTimeRangeDays === 7 ? '7 DAY HISTORY' : currentTimeRangeDays === 30 ? '30 DAY HISTORY' : '1 YEAR HISTORY';
+    document.getElementById('chartLabelText').textContent = timeLabel;
+
+    if (inflowResult && outflowValues.length > 0) {
+        updateComboChart(
+            inflowResult.series,
+            outflowValues.map(v => ({ dateTime: v.dateTime, value: v.value })),
+            currentTimeRangeDays
+        );
+    }
+    return;
+}
     const days = currentTimeRangeDays;
     
     try {
@@ -1212,6 +1332,101 @@ function updateDetailChart(data, days, field) {
                 axis: 'x',
                 intersect: false
             }
+        }
+        
+    });
+}
+function updateComboChart(inflowSeries, outflowSeries, days) {
+    const ctx = document.getElementById('detailChart').getContext('2d');
+
+    const formatDate = (date) => {
+        if (days <= 7) return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        if (days <= 30) return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+    };
+
+    // Use outflow as the x-axis labels (longer series)
+    const labels = outflowSeries.map(v => formatDate(new Date(v.dateTime)));
+    const outflowValues = outflowSeries.map(v => parseFloat(v.value));
+
+    // Align inflow to outflow timestamps (inflow is 15-min, outflow may be different interval)
+    // Simple approach: just use inflow's own labels and values, Chart.js handles two datasets fine
+    const inflowLabels = inflowSeries.map(v => formatDate(new Date(v.dateTime)));
+    const inflowValues = inflowSeries.map(v => parseFloat(v.value));
+
+    // Use whichever series is longer for labels
+    const masterLabels = labels.length >= inflowLabels.length ? labels : inflowLabels;
+
+    if (detailChart) detailChart.destroy();
+
+    detailChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: masterLabels,
+            datasets: [
+                {
+                    label: 'Outflow',
+                    data: outflowValues,
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.1,
+                    pointRadius: 0
+                },
+                {
+                    label: 'Inflow',
+                    data: inflowValues,
+                    borderColor: '#22c55e',
+                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.1,
+                    pointRadius: 0
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        color: 'rgba(255,255,255,0.7)',
+                        font: { size: 11, family: "'Courier New', Courier, monospace" },
+                        boxWidth: 12
+                    }
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    padding: 8,
+                    titleFont: { size: 12, family: "'Courier New', Courier, monospace" },
+                    bodyFont: { size: 12, family: "'Courier New', Courier, monospace" },
+                    backgroundColor: '#000',
+                    borderColor: 'rgba(255,255,255,0.2)',
+                    borderWidth: 1,
+                    titleColor: '#fff',
+                    bodyColor: '#fff'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    grid: { display: true, color: 'rgba(255,255,255,0.1)', borderDash: [3,3] },
+                    ticks: { font: { size: 10, family: "'Courier New', Courier, monospace" }, color: 'rgba(255,255,255,0.4)' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: {
+                        font: { size: 10, family: "'Courier New', Courier, monospace" },
+                        color: 'rgba(255,255,255,0.4)',
+                        maxTicksLimit: days <= 7 ? 7 : 10
+                    }
+                }
+            },
+            interaction: { mode: 'nearest', axis: 'x', intersect: false }
         }
     });
 }
