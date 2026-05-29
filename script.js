@@ -38,8 +38,7 @@ async function fetchTappanInflow(days) {
         let chartValues = recentValues;
 
         if (days <= 7) {
-            // 7-day IV: 672 points but page-size=500 gets most of it, good enough
-            const data = await fetchCWMS(name, days);
+            const data = await fetchCWMS(name, 4);
             const vals = (data?.values || []).filter(v => v[1] !== null);
             if (vals.length > 0) chartValues = vals;
 
@@ -1178,7 +1177,7 @@ if (activeMetric === 'flowCombo' && currentLake.name === 'Tappan Lake') {
         (async () => {
             const end = new Date();
             const begin = new Date();
-            begin.setDate(begin.getDate() - currentTimeRangeDays);
+            begin.setDate(begin.getDate() - 4);
             const formatDate = d => d.toISOString().split('T')[0];
             const apiUrl = currentTimeRangeDays >= 30 ? DV_API_URL : IV_API_URL;
             const res = await fetch(`${apiUrl}?format=json&sites=03128500&parameterCd=00060&startDT=${formatDate(begin)}&endDT=${formatDate(end)}&siteStatus=all`);
@@ -1339,34 +1338,26 @@ function updateDetailChart(data, days, field) {
 function updateComboChart(inflowSeries, outflowSeries, days) {
     const ctx = document.getElementById('detailChart').getContext('2d');
 
-    const formatDate = (date) => {
-        if (days <= 7) return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        if (days <= 30) return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
-    };
+    // Convert both series to {x: timestamp, y: value} objects
+    const outflowData = outflowSeries.map(v => ({
+        x: new Date(v.dateTime).getTime(),
+        y: parseFloat(v.value)
+    }));
 
-    // Use outflow as the x-axis labels (longer series)
-    const labels = outflowSeries.map(v => formatDate(new Date(v.dateTime)));
-    const outflowValues = outflowSeries.map(v => parseFloat(v.value));
-
-    // Align inflow to outflow timestamps (inflow is 15-min, outflow may be different interval)
-    // Simple approach: just use inflow's own labels and values, Chart.js handles two datasets fine
-    const inflowLabels = inflowSeries.map(v => formatDate(new Date(v.dateTime)));
-    const inflowValues = inflowSeries.map(v => parseFloat(v.value));
-
-    // Use whichever series is longer for labels
-    const masterLabels = labels.length >= inflowLabels.length ? labels : inflowLabels;
+    const inflowData = inflowSeries.map(v => ({
+        x: new Date(v.dateTime).getTime(),
+        y: parseFloat(v.value)
+    }));
 
     if (detailChart) detailChart.destroy();
 
     detailChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: masterLabels,
             datasets: [
                 {
                     label: 'Outflow',
-                    data: outflowValues,
+                    data: outflowData,
                     borderColor: '#ef4444',
                     backgroundColor: 'rgba(239, 68, 68, 0.1)',
                     borderWidth: 2,
@@ -1376,7 +1367,7 @@ function updateComboChart(inflowSeries, outflowSeries, days) {
                 },
                 {
                     label: 'Inflow',
-                    data: inflowValues,
+                    data: inflowData,
                     borderColor: '#22c55e',
                     backgroundColor: 'rgba(34, 197, 94, 0.1)',
                     borderWidth: 2,
@@ -1408,21 +1399,35 @@ function updateComboChart(inflowSeries, outflowSeries, days) {
                     borderColor: 'rgba(255,255,255,0.2)',
                     borderWidth: 1,
                     titleColor: '#fff',
-                    bodyColor: '#fff'
+                    bodyColor: '#fff',
+                    callbacks: {
+                        title: (items) => {
+                            const d = new Date(items[0].parsed.x);
+                            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                        }
+                    }
                 }
             },
             scales: {
-                y: {
-                    beginAtZero: false,
-                    grid: { display: true, color: 'rgba(255,255,255,0.1)', borderDash: [3,3] },
-                    ticks: { font: { size: 10, family: "'Courier New', Courier, monospace" }, color: 'rgba(255,255,255,0.4)' }
-                },
                 x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day',
+                        displayFormats: { day: 'MMM d' }
+                    },
                     grid: { display: false },
                     ticks: {
                         font: { size: 10, family: "'Courier New', Courier, monospace" },
                         color: 'rgba(255,255,255,0.4)',
-                        maxTicksLimit: days <= 7 ? 7 : 10
+                        maxTicksLimit: 7
+                    }
+                },
+                y: {
+                    beginAtZero: false,
+                    grid: { display: true, color: 'rgba(255,255,255,0.1)', borderDash: [3, 3] },
+                    ticks: {
+                        font: { size: 10, family: "'Courier New', Courier, monospace" },
+                        color: 'rgba(255,255,255,0.4)'
                     }
                 }
             },
@@ -1430,7 +1435,6 @@ function updateComboChart(inflowSeries, outflowSeries, days) {
         }
     });
 }
-
 // Lake selection
 function selectLake(lake) {
     currentLake = lake;
