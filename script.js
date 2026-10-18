@@ -1034,22 +1034,55 @@ function endScrub() {
 function setupChartScrub() {
     const wrap = document.querySelector('.chart-wrapper-detail');
     if (!wrap) return;
+
+    const HOLD_MS = 200;      // how long to hold before scrubbing starts
+    const MOVE_SLOP = 8;      // px of movement during the hold that means "this is a scroll"
     let scrubbing = false;
-    wrap.addEventListener('touchmove', (e) => { if (scrubbing) e.preventDefault(); }, { passive: false });
-    wrap.addEventListener('pointerdown', (e) => {
+    let holdTimer = null;
+    let startX = 0, startY = 0, lastX = 0;
+
+    const begin = (pointerId) => {
         scrubbing = true;
-        try { wrap.setPointerCapture(e.pointerId); } catch (_) {}
-        scrubTo(e.clientX);
+        try { wrap.setPointerCapture(pointerId); } catch (_) {}
+        if (navigator.vibrate) navigator.vibrate(8); // light haptic where supported
+        scrubTo(lastX);
+    };
+    const stop = () => {
+        clearTimeout(holdTimer);
+        holdTimer = null;
+        if (scrubbing) { scrubbing = false; endScrub(); }
+    };
+
+    wrap.addEventListener('pointerdown', (e) => {
+        startX = lastX = e.clientX;
+        startY = e.clientY;
+        if (e.pointerType === 'mouse') { begin(e.pointerId); return; }
+        // touch / pen: wait for a press-and-hold
+        clearTimeout(holdTimer);
+        holdTimer = setTimeout(() => begin(e.pointerId), HOLD_MS);
     });
+
     wrap.addEventListener('pointermove', (e) => {
-        if (scrubbing || e.pointerType === 'mouse') scrubTo(e.clientX);
+        lastX = e.clientX;
+        if (scrubbing) { scrubTo(e.clientX); return; }
+        if (e.pointerType === 'mouse') { scrubTo(e.clientX); return; } // desktop hover
+        // finger moved before the hold finished -> it's a scroll, cancel the pending scrub
+        if (holdTimer && (Math.abs(e.clientX - startX) > MOVE_SLOP || Math.abs(e.clientY - startY) > MOVE_SLOP)) {
+            clearTimeout(holdTimer);
+            holdTimer = null;
+        }
     });
-    const stop = () => { scrubbing = false; endScrub(); };
+
+    // Once scrubbing, block the page from scrolling for the rest of this touch
+    wrap.addEventListener('touchmove', (e) => { if (scrubbing) e.preventDefault(); }, { passive: false });
+
+    // Stop the long-press context menu / text selection popup
+    wrap.addEventListener('contextmenu', (e) => e.preventDefault());
+
     wrap.addEventListener('pointerup', stop);
     wrap.addEventListener('pointercancel', stop);
-    wrap.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse' || !scrubbing) endScrub(); });
+    wrap.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') stop(); });
 }
-
 // Lake selection
 let launchScrollY = 0;
 function selectLake(lake) {

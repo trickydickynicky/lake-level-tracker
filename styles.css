@@ -239,7 +239,7 @@ button { font-family: inherit; color: inherit; }
 /* Chart */
 .chart-card { padding: 8px 0 0; }
 .chart-label-container { display: none; } /* legacy dropdown kept in DOM for JS; pills replace it */
-.chart-wrapper-detail { position: relative; width: calc(100% + 40px); margin: 0 -20px; height: 240px; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: crosshair; }
+.chart-wrapper-detail { position: relative; width: calc(100% + 40px); margin: 0 -20px; height: 240px; touch-action: pan-y; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: crosshair; }
 #detailChart { background: transparent; }
 .chart-skel { position: absolute; left: 20px; right: 20px; top: 50%; height: 3px; border-radius: 2px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
 .is-loading .chart-skel { opacity: 1; }
