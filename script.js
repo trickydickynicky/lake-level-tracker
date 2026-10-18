@@ -1035,6 +1035,7 @@ function setupChartScrub() {
     const wrap = document.querySelector('.chart-wrapper-detail');
     if (!wrap) return;
     let scrubbing = false;
+    wrap.addEventListener('touchmove', (e) => { if (scrubbing) e.preventDefault(); }, { passive: false });
     wrap.addEventListener('pointerdown', (e) => {
         scrubbing = true;
         try { wrap.setPointerCapture(e.pointerId); } catch (_) {}
