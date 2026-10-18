@@ -50,8 +50,8 @@ button { font-family: inherit; color: inherit; }
 @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 
 /* ===== Screen transitions ===== */
-.screen-enter { animation: screenIn 0.26s var(--ease) both; }
-.screen-enter-back { animation: screenInBack 0.22s var(--ease) both; }
+.screen-enter { animation: screenIn 0.26s var(--ease) backwards; }
+.screen-enter-back { animation: screenInBack 0.22s var(--ease) backwards; }
 @keyframes screenIn { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
 @keyframes screenInBack { from { opacity: 0; transform: translateX(-18px); } to { opacity: 1; transform: none; } }
 
