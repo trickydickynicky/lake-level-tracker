@@ -1083,6 +1083,7 @@ function setupChartScrub() {
     wrap.addEventListener('pointercancel', stop);
     wrap.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') stop(); });
 }
+
 // Lake selection
 let launchScrollY = 0;
 function selectLake(lake) {
@@ -1207,12 +1208,7 @@ function setupRangePills() {
         });
     });
 }
-function hideSplash() {
-    const s = document.getElementById('splash');
-    if (!s) return;
-    s.classList.add('hide');
-    setTimeout(() => s.remove(), 400);
-}
+
 // Initialize function
 async function initialize() {
     launchScreen.style.display = 'flex';
@@ -1240,9 +1236,7 @@ async function initialize() {
         lakeSearch.focus({ preventScroll: true });
     });
 
-    const listsReady = updateFavoritesList();
-    requestAnimationFrame(() => requestAnimationFrame(hideSplash));
-    await listsReady;
+    await updateFavoritesList();
 }
 
 // Initialize when DOM is fully loaded
