@@ -1207,7 +1207,12 @@ function setupRangePills() {
         });
     });
 }
-
+function hideSplash() {
+    const s = document.getElementById('splash');
+    if (!s) return;
+    s.classList.add('hide');
+    setTimeout(() => s.remove(), 400);
+}
 // Initialize function
 async function initialize() {
     launchScreen.style.display = 'flex';
@@ -1235,7 +1240,9 @@ async function initialize() {
         lakeSearch.focus({ preventScroll: true });
     });
 
-    await updateFavoritesList();
+    const listsReady = updateFavoritesList();
+    requestAnimationFrame(() => requestAnimationFrame(hideSplash));
+    await listsReady;
 }
 
 // Initialize when DOM is fully loaded
